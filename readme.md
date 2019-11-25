@@ -1,35 +1,24 @@
-# INF99X: Sample Course
+﻿**私達は何をしてるのでしょうか?**
 
-- **[Download Latest Student Handbook and AllFiles Content](../../releases/latest)**
-- **Are you a MCT?** - Have a look at our [GitHub User Guide for MCTs](https://microsoftlearning.github.io/MCT-User-Guide/)
-- **Need to manually build the lab instructions?** - Instructions are available in the [MicrosoftLearning/Docker-Build](https://github.com/MicrosoftLearning/Docker-Build) repository
+*	コースの作成者と MCT の間の対話を可能にするために、GitHub でラボの手順とラボファイルを公開しています。Azure プラットフォームの変更に合ったコンテンツを最新の状態に保つのに役立つことを願っています。
 
-## What are we doing?
+*	コース AZ-120 の GitHub リポジトリがあり、SAP ワークロード用の Microsoft Azure の計画と管理を行います。
 
-- To support this course, we will need to make frequent updates to the course content to keep it current with the Azure services used in the course.  We are publishing the lab instructions and lab files on GitHub to allow for open contributions between the course authors and MCTs to keep the content current with changes in the Azure platform.
+*	配信ごとに、トレーナーは GitHub から最新のファイルをダウンロードする必要があります。トレーナーは、[問題] タブをチェックして、他の MCT がエラーを報告したかどうかを確認する必要があります。  
 
-- We hope that this brings a sense of collaboration to the labs like we've never had before - when Azure changes and you find it first during a live delivery, go ahead and make an enhancement right in the lab source.  Help your fellow MCTs.
+*	ラボのタイミングの見積もりが提供されますが、トレーナーは、これが聴衆に基づいて正確であることを確認する必要があります。
 
-## How should I use these files relative to the released MOC files?
+*	ラボの内容は、一貫性と利便性のために各コースの最後に配置されています。ただし、インストラクターとして、あなたはラボの提供時期を判断するのに最適な判定者です。
 
-- The instructor handbook and PowerPoints are still going to be your primary source for teaching the course content.
+*	実施するするには、インターネット接続と Azure サブスクリプションが必要です。詳細については、インストラクター準備ガイドをご覧ください。 
 
-- These files on GitHub are designed to be used in conjunction with the student handbook, but are in GitHub as a central repository so MCTs and course authors can have a shared source for the latest lab files.
+*	GitHubリポジトリを参照させるのではなく、これらの資料を直接学生に提供することを推奨します。 
 
-- It will be recommended that for every delivery, trainers check GitHub for any changes that may have been made to support the latest Azure services, and get the latest files for their delivery.
+**どうでしょう?**
 
-## What about changes to the student handbook?
+*	これらのコースを教えている場合は、改善すべき領域を特定し、[問題] タブを使ってフィードバックを提供してください。私達は、定期的に新しいファイルを作成し、変更を組み込みます。 
 
-- We will review the student handbook on a quarterly basis and update through the normal MOC release channels as needed.
+この GitHub リポジトリを使うと、ラボにコラボレーションの感覚が生まれます。また。ラボエクスペリエンスの全体的な品質が向上することを願っています。 
 
-## How do I contribute?
-
-- Any MCT can submit a pull request to the code or content in the GitHub repro, Microsoft and the course author will triage and include content and lab code changes as needed.
-
-- You can submit bugs, changes, improvement and ideas.  Find a new Azure feature before we have?  Submit a new demo!
-
-## Notes
-
-### Classroom Materials
-
-It is strongly recommended that MCTs and Partners access these materials and in turn, provide them separately to students.  Pointing students directly to GitHub to access Lab steps as part of an ongoing class will require them to access yet another UI as part of the course, contributing to a confusing experience for the student. An explanation to the student regarding why they are receiving separate Lab instructions can highlight the nature of an always-changing cloud-based interface and platform. Microsoft Learning support for accessing files on GitHub and support for navigation of the GitHub site is limited to MCTs teaching this course only.
+それでは。
+Azure コースウェアチーム

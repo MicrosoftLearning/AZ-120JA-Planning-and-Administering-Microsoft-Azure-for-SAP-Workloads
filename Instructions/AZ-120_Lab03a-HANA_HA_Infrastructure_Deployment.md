@@ -532,7 +532,7 @@ passwd hacluster
 
 ### タスク 2: corosync 構成の確認
 
-1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから次を実行して、vi エディターで **/etc/corosync/corosync.conf** ファイルを開きます。
+1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから次を実行して、**/etc/corosync/corosync.conf** ファイルを開きます。
 
 ```
 cat /etc/corosync/corosync.conf

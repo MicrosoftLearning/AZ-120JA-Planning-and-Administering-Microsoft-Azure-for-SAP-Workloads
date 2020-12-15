@@ -10,7 +10,7 @@
 
     -   2 x Standard_E4s_v3 (各 4 vCPU) = 8
 
-    > **注記**: Availability Zones をサポートする Azure リージョンを特定するには、[https://docs.microsoft.com/ja-jp/azure/availability-zones/az-overview]<https://docs.microsoft.com/ja-jp/azure/availability-zones/az-overview> をご覧ください。
+    > **注記**: Availability Zones をサポートする Azure リージョンを特定するには、[https://docs.microsoft.com/ja-jp/azure/availability-zones/az-overview](https://docs.microsoft.com/ja-jp/azure/availability-zones/az-overview) をご覧ください。
 
 このコースの最初の 3 つのラボの vCPU 要件は低いですが、クォータを増やすプロセスには時間がかかる場合があるため (クォータの増加要求が同じ営業日に完了する場合もあります)、ラボ全体の要件を満たせるようクォータの増加を要求するようお勧めします。
 
@@ -29,9 +29,9 @@
 1.  Azure Portal の **Cloud Shell** で、PowerShell プロンプトで、次を実行します。`<Azure_region>` は、このラボで使用する対象の Azure リージョンを指定します。
 
 ```
-Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardDSv3Family'}
+    Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardDSv3Family'}
 
-Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardESv3Family'}
+    Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardESv3Family'}
 
 ``` 
 

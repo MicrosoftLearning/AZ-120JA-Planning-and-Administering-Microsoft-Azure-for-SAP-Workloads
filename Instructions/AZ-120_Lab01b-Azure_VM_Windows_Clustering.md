@@ -41,7 +41,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
 1.  プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
 
-1.  Azure portal で、「**+ リソースの作成 **」 をクリックします。
+1.  Azure portal で、「**+ リソースの作成**」 をクリックします。
 
 1.  「**新規**」 ブレードから、新しい **Template deployment (カスタム テンプレートを使用してデプロイ)** の作成を開始します
 
@@ -54,14 +54,14 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数に値を割り当てる行を探します。
 
 ```
-"adVMSize": "Standard_DS2_v2"
+    "adVMSize": "Standard_DS2_v2"
 
 ```
 
 1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数の値を **Standard_D4S_v3** に設定し、「**保存**」 をクリックします。
 
 ```
-"adVMSize": "Standard_D4s_v3"
+    "adVMSize": "Standard_D4s_v3"
 
 ```
 
@@ -339,9 +339,9 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
     -   パスワード: **Pa55w.rd1234**
 
-1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで 「**ローカル サーバー**」 ビューに移動し、「** IE セキュリティ強化の構成**」 を一時的にオフにします。 
+1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで 「**ローカル サーバー**」 ビューに移動し、「**IE セキュリティ強化の構成**」 を一時的にオフにします。 
 
-1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ファイル サービスと記憶域サービス **」 -> 「**サーバー**」  ノードの順に移動します。    
+1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ファイル サービスと記憶域サービス**」 -> 「**サーバー**」  ノードの順に移動します。    
 
 1.  「**記憶域プール**」 ビューに移動し、前のエクササイズで Azure VM に接続したディスクすべてが表示されていることを確認します。 
 
@@ -414,14 +414,14 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 1.  az12001b-cl-vm0 への RDP セッションで、Windows PowerShell ISE セッションを開始し、az12001b-cl-vm0 と az12001b-cl-vm1 の両方にフェールオーバー クラスタリングおよびリモート管理ツール機能をインストールします。
 
 ```
-$nodes = @('az12001b-cl-vm1', 'az12001b-cl-vm0')
+    $nodes = @('az12001b-cl-vm1', 'az12001b-cl-vm0')
 
-Invoke-Command $nodes {Install-WindowsFeature Failover-Clustering -IncludeAllSubFeature -IncludeManagementTools} 
+    Invoke-Command $nodes {Install-WindowsFeature Failover-Clustering -IncludeAllSubFeature -IncludeManagementTools} 
 
-Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restart} 
+    Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restart} 
 ```
 
-    > **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
+> **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
 
 1.  ラボ コンピューターで Azure portal を開き、「**+ リソースを作成**」 をクリックします。
 
@@ -470,9 +470,9 @@ Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restar
 1.  az12001b-cl-vm0 への RDP セッションで、Windows PowerShell ISE セッションを開始し、次を実行して新しいクラスターを作成します。
 
 ```
-$nodes = @('az12001b-cl-vm0','az12001b-cl-vm1')
+    $nodes = @('az12001b-cl-vm0','az12001b-cl-vm1')
 
-New-Cluster -Name az12001b-cl-cl0 -Node $nodes -NoStorage -StaticAddress 10.0.1.6
+    New-Cluster -Name az12001b-cl-cl0 -Node $nodes -NoStorage -StaticAddress 10.0.1.6
 ```
 
 1.  az12001b-cl-vm0 への RDP セッションから 、**Active Directory 管理センター コンソール** に切り替えます。 
@@ -496,29 +496,29 @@ New-Cluster -Name az12001b-cl-cl0 -Node $nodes -NoStorage -StaticAddress 10.0.1.
 1.  Windows PowerShell ISE セッションで、次を実行して Az PowerShell モジュールをインストールします。
 
 ```
-Install-PackageProvider -Name NuGet -Force
+    Install-PackageProvider -Name NuGet -Force
 
-Install-Module -Name Az -Force
+    Install-Module -Name Az -Force
 ```
 
 1.  Windows PowerShell ISE セッションで、次のを実行して Azure AD 認証情報を使用して認証します。
 
 ```
-Add-AzAccount
+    Add-AzAccount
 ```
 
-    > **注記**: プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
+> **注記**: プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
 
 1.  Windows PowerShell ISE セッションで次を実行して、新しいクラスターの Cloud Witness Quorum を設定します。
 
 ```
-$resourceGroupName = 'az12001b-cl-RG'
+    $resourceGroupName = 'az12001b-cl-RG'
 
-$cwStorageAccountName = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName)[0].StorageAccountName
+    $cwStorageAccountName = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName)[0].StorageAccountName
 
-$cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $cwStorageAccountName).Value[0]
+    $cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $cwStorageAccountName).Value[0]
 
-Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $cwStorageAccountKey
+    Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $cwStorageAccountKey
 ```
 
 1.  結果の構成を確認するには、az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ツール**」 メニューから 「**フェールオーバー クラスター マネージャー**」 を起動します。   
@@ -574,7 +574,7 @@ Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $c
 
 ### タスク 2: 受信トラフィックを処理する Azure Load Balancers を作成して構成する
 
-1.  Azure portal で、「**+ リソースの作成 **」 をクリックします。
+1.  Azure portal で、「**+ リソースの作成**」 をクリックします。
 
 1.  「**新規**」 ブレードで、次の設定を使用して新しい Azure Load Balancer の作成を開始します。
 
@@ -622,7 +622,7 @@ Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $c
 
     -   間隔: **5** *秒*
 
-    -   異常しきい値: **2** *つの連続エラー *
+    -   異常しきい値: **2** *つの連続エラー*
 
 1.  **az12001b-cl-lb0** ブレードから、次の設定を使用してネットワーク負荷分散ルールを追加します。
 
@@ -657,31 +657,31 @@ Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $c
 1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer で使用するパブリック IP アドレスを作成します。
 
 ```
-$resourceGroupName = 'az12001b-cl-RG'
+    $resourceGroupName = 'az12001b-cl-RG'
 
-$location = (Get-AzResourceGroup -Name $resourceGroupName).Location
+    $location = (Get-AzResourceGroup -Name $resourceGroupName).Location
 
-$pipName = 'az12001b-cl-lb0-pip'
+    $pipName = 'az12001b-cl-lb0-pip'
 
-az network public-ip create --resource-group $resourceGroupName --name $pipName --sku Standard --location $location
+    az network public-ip create --resource-group $resourceGroupName --name $pipName --sku Standard --location $location
 ```
 
 1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer を作成します。
 
 ```
-$lbName = 'az12001b-cl-lb1'
+    $lbName = 'az12001b-cl-lb1'
 
-$lbFeName = 'az12001b-cl-lb1-fe'
+    $lbFeName = 'az12001b-cl-lb1-fe'
 
-$lbBePoolName = 'az12001b-cl-lb1-bepool'
+    $lbBePoolName = 'az12001b-cl-lb1-bepool'
    
-$pip = Get-AzPublicIpAddress -ResourceGroupName $resourceGroupName -Name $pipName
+    $pip = Get-AzPublicIpAddress -ResourceGroupName $resourceGroupName -Name $pipName
 
-$feIpconfiguration = New-AzLoadBalancerFrontendIpConfig -Name $lbFeName -PublicIpAddress $pip
+    $feIpconfiguration = New-AzLoadBalancerFrontendIpConfig -Name $lbFeName -PublicIpAddress $pip
 
-$bePoolConfiguration = New-AzLoadBalancerBackendAddressPoolConfig -Name $lbBePoolName
+    $bePoolConfiguration = New-AzLoadBalancerBackendAddressPoolConfig -Name $lbBePoolName
 
-New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Name $lbName -Sku Standard -BackendAddressPool $bePoolConfiguration -FrontendIpConfiguration $feIpconfiguration
+    New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Name $lbName -Sku Standard -BackendAddressPool $bePoolConfiguration -FrontendIpConfiguration $feIpconfiguration
 ```
 
 1.  「Cloud Shell」 ウィンドウを閉じます。
@@ -704,7 +704,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
 1.  **az12001b-cl-lb1 - 正常性プローブ** ブレードから、次の設定を使用して正常性プローブを追加します。
 
-    -   名前: **az12001b-cl-lb0-hprobe**
+    -   名前: **az12001b-cl-lb1-hprobe**
 
     -   プロトコル: **TCP**
 
@@ -712,7 +712,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
     -   間隔: **5** *秒*
 
-    -   異常しきい値: **2** *つの連続エラー *
+    -   異常しきい値: **2** *つの連続エラー*
 
 1.  **az12001b-cl-lb1** ブレードで、「**負荷分散ルール**」 をクリックします。
 
@@ -730,9 +730,9 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
     -   バックエンド ポート: **80**
 
-    -   バックエンド プール: **az12001b-cl-lb0-bepool (2 台の仮想マシン)**
+    -   バックエンド プール: **az12001b-cl-lb1-bepool (2 台の仮想マシン)**
 
-    -   正常性プローブ: **az12001b-cl-lb0-hprobe (TCP:59999)**
+    -   正常性プローブ: **az12001b-cl-lb1-hprobe (TCP:80)**
 
     -   セッション永続化: **なし**
 
@@ -831,7 +831,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 1. ポータルの下部にある **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 を押して、このラボで作成したすべてのリソース グループを一覧表示します。
 
 ```
-Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Select-Object ResourceGroupName
+    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Select-Object ResourceGroupName
 ```
 
 1. このラボで作成したリソース グループのみが出力に含まれていることを確認します。これらのグループは、次のタスクで削除されます。
@@ -841,7 +841,7 @@ Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | S
 1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 キーを押して、このラボで作成したリソース グループを削除します。
 
 ```
-Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Remove-AzResourceGroup -Force  
+    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Remove-AzResourceGroup -Force  
 ```
 
 1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。

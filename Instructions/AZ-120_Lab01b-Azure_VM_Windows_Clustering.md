@@ -1,11 +1,5 @@
-﻿---
-lab:
-    title: '3b: Azure VM での Windows クラスタリングの実装'
-    module: 'モジュール 3: Azure での SAP 認定オファリング'
----
-
-# AZ 120 モジュール 3: Azure での SAP 認定オファリング
-# ラボ 3b: Azure VM での Windows クラスタリングの実装
+﻿# AZ 120 モジュール 1: Azure での SAP 認定オファリング
+# ラボ 1b: Azure VM での Windows クラスタリングの実装
 
 推定時間: 120 分間
 
@@ -47,31 +41,31 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
 1.  プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
 
-1.  Azure portal で、[**+ リソースの作成 **] をクリックします。
+1.  Azure portal で、「**+ リソースの作成 **」 をクリックします。
 
-1.  [**新規**] ブレードから、新しい **Template deployment (カスタム テンプレートを使用してデプロイ)** の作成を開始します
+1.  「**新規**」 ブレードから、新しい **Template deployment (カスタム テンプレートを使用してデプロイ)** の作成を開始します
 
-1.  [**カスタム デプロイ**] ブレードの [**GitHub クイックスタート テンプレートを読み込む**] ドロップダウン リストから、エントリ **active-directory-new-domain-ha-2-dc** を選択し、[**テンプレートの選択**] をクリックします。
+1.  「**カスタム デプロイ**」 ブレードの 「**GitHub クイックスタート テンプレートを読み込む**」 ドロップダウン リストから、エントリ **active-directory-new-domain-ha-2-dc** を選択し、「**テンプレートの選択**」 をクリックします。
 
-    > **注記**: または、Azure クイックスタート テンプレート ページ <https://github.com/Azure/azure-quickstart-templates> に移動して、**Create 2 new Windows VMs, create a new AD Forest, Domain, and 2 DCs in an availability set (可用性セットに 2 つの新規 Windows VM, 新しい AD Forest、ドメイン、2 つの DC を作成する)** という名前のテンプレートを検索し、[**Azure に配置する**] ボタンをクリックしてデプロイを開始します。   
+    > **注記**: または、Azure クイックスタート テンプレート ページ <https://github.com/Azure/azure-quickstart-templates> に移動して、**Create 2 new Windows VMs, create a new AD Forest, Domain, and 2 DCs in an availability set (可用性セットに 2 つの新規 Windows VM, 新しい AD Forest、ドメイン、2 つの DC を作成する)** という名前のテンプレートを検索し、「**Azure に配置する**」 ボタンをクリックしてデプロイを開始します。   
 
-1.  [**2 ドメイン コントローラーを持つ新しい AD ドメインの作成** ] ブレードで、[**テンプレートの編集**] をクリックします。
+1.  「**2 ドメイン コントローラーを持つ新しい AD ドメインの作成**」 ブレードで、「**テンプレートの編集**」 をクリックします。
 
-1.  [**テンプレートの編集**] ブレードで、**adVMSize** 変数に値を割り当てる行を探します。
+1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数に値を割り当てる行を探します。
 
 ```
 "adVMSize": "Standard_DS2_v2"
 
 ```
 
-1.  [**テンプレートの編集** ] ブレードで、**adVMSize** 変数の値を **Standard_D4S_v3** に設定し、[**保存**] をクリックします。
+1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数の値を **Standard_D4S_v3** に設定し、「**保存**」 をクリックします。
 
 ```
-"adVMSize": "Standard_D4S_v3"
+"adVMSize": "Standard_D4s_v3"
 
 ```
 
-1.  [**2 つのドメインコントローラーを使用して新しい AD ドメインを作成する**] ブレードに戻り、次の設定を指定し、[**購入** ] をクリックしてデプロイを開始します。
+1.  「**2 つのドメインコントローラーを使用して新しい AD ドメインを作成する**」 ブレードに戻り、次の設定を指定し、「**購入**」 をクリックしてデプロイを開始します。
 
     -   サブスクリプション: Azure サブスクリプションの名前。
 
@@ -79,7 +73,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
     -   場所: *Azure VM をデプロイできて、ラボの場所に最も近い Azure リージョン*
 
-    -   管理者ユーザー名: **受講者**
+    -   管理者ユーザー名: **Student**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -91,7 +85,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
     -   Bdc RDP ポート: **13389**
 
-    -   _artifacts の保存先: **https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/active-directory-new-domain-ha-2-dc**
+    -   _artifacts の保存先: **https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/active-directory-new-domain-ha-2-dc/**
 
     -   _artifacts の保存先の Sas トークン: *空白のままにする*
 
@@ -103,9 +97,9 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
 ### タスク 2: 同じ可用性セットで Windows Server 2016 を実行している Azure VM のペアをデプロイする。
 
-1.  ラボ コンピューターの Azure portal で、[**+ リソースの作成**] をクリックします。
+1.  ラボ コンピューターの Azure portal で、「**+ リソースの作成**」 をクリックします。
 
-1.  [**新規**] ブレードで、次の設定を使用して **Windows Server 2019 Datacenter** Azure VM のプロビジョニングを開始します。
+1.  「**新規**」 ブレードで、次の設定を使用して **Windows Server 2019 Datacenter** Azure VM のプロビジョニングを開始します。
 
     -   サブスクリプション: Azure サブスクリプションの名前。
 
@@ -123,7 +117,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
     -   サイズ: **Standard D4s v3**
 
-    -   ユーザー名: **受講者**
+    -   ユーザー名: **Student**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -191,7 +185,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
     -   サイズ: **Standard D4s v3**
 
-    -   ユーザー名: **受講者**
+    -   ユーザー名: **Student**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -245,7 +239,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
     > **注記**: 現在の Azure サブスクリプションで Cloud Shell を初めて起動する場合は、Azure ファイル共有を作成して Cloud Shell ファイルを保持するように求められます。その場合、既定値を受け入れると、自動的に生成されたリソース グループにストレージ アカウントが作成されます。
 
-1.  [Cloud Shell] ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした最初の Azure VM に接続する 4 個のマネージド ディスクの最初のセットを作成します。
+1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした最初の Azure VM に接続する 4 個のマネージド ディスクの最初のセットを作成します。
 
 ```
 $resourceGroupName = 'az12001b-cl-RG'
@@ -257,7 +251,7 @@ $diskConfig = New-AzDiskConfig -Location $location -DiskSizeGB 128 -AccountType 
 for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm0-DataDisk$i -Disk $diskConfig}
 ```
 
-1.  [Cloud Shell] ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした 2 番目の Azure VM に接続する 4 個のマネージド ディスクの 2 番目のセットを作成します。
+1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした 2 番目の Azure VM に接続する 4 個のマネージド ディスクの 2 番目のセットを作成します。
 
 ```
 for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm1-DataDisk$i -Disk $diskConfig}
@@ -283,7 +277,7 @@ for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -Disk
 
 1.  Azure portal で、前のタスク (**az12001b-cl-vm1**) でプロビジョニングした 2 番目の Azure VM のブレードに移動します。
 
-1.  **az12001b-cl-vm0** ブレードから、**az12001b-cl-vm0 - ディスク** ブレードに移動します。
+1.  **az12001b-cl-vm1** ブレードから、**az12001b-cl-vm1 - ディスク** ブレードに移動します。
 
 1.  **az12001b-cl-vm1 - ディスク** ブレードから、az12001b-cl-vm1 に次の設定を持つデータ ディスクを接続します。
 
@@ -316,7 +310,7 @@ for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -Disk
 
 1.  Azure portal の Cloud Shell で PowerShell セッションを開始します。 
 
-1.  [Cloud Shell] ウィンドウで次のコマンドを実行して、前のエクササイズの 2 番目のタスクでデプロイした Windows Server 2019 Azure VM を **adatum.com** Active Directory ドメインに結合します。 
+1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、前のエクササイズの 2 番目のタスクでデプロイした Windows Server 2019 Azure VM を **adatum.com** Active Directory ドメインに結合します。 
 
 ```
 $resourceGroupName = 'az12001b-cl-RG'
@@ -341,21 +335,21 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1.  **az12001b-cl-vm0** ブレードから、リモート デスクトップを使用して仮想マシン ゲスト オペレーティング システムに接続します。  認証を求めるメッセージが表示されたら、次の認証情報を入力します。
 
-    -   ユーザー名: **ADATUM\受講生**
+    -   ユーザー名: **ADATUM\Student**
 
     -   パスワード: **Pa55w.rd1234**
 
-1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで [**ローカル サーバー**] ビューに移動し、[** IE セキュリティ強化の構成**] を一時的にオフにします。 
+1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで 「**ローカル サーバー**」 ビューに移動し、「** IE セキュリティ強化の構成**」 を一時的にオフにします。 
 
-1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、[**ファイル サービスと記憶域サービス **] -> [**サーバー**]  ノードの順に移動します。    
+1.  az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ファイル サービスと記憶域サービス **」 -> 「**サーバー**」  ノードの順に移動します。    
 
-1.  [**記憶域プール**] ビューに移動し、前のエクササイズで Azure VM に接続したディスクすべてが表示されていることを確認します。 
+1.  「**記憶域プール**」 ビューに移動し、前のエクササイズで Azure VM に接続したディスクすべてが表示されていることを確認します。 
 
 1.  **新規記憶域プール ウィザード** を使用して、次の設定で新しい記憶域プールを作成します。
 
     -   名前: **データ記憶域プール**
 
-    -   物理ディスク: *LUN 番号 (0-2) の最初の 3 つに対応するディスク番号を持つ 3 つのディスクを選択し、割り当てを* [**自動**] に設定します。
+    -   物理ディスク: *LUN 番号 (0-2) の最初の 3 つに対応するディスク番号を持つ 3 つのディスクを選択し、割り当てを* 「**自動**」 に設定します。
 
     > **注記**:  **シャーシ** 列のエントリを使用して、 **LUN** 番号を特定します。   
 
@@ -383,11 +377,11 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
     -   ボリューム ラベル: **データ**
 
-1.  [**記憶域プール**] ビューに戻り、**新規記憶域プール ウィザード** を使用して、次の設定で新しい記憶域プールを作成します。
+1.  「**記憶域プール**」 ビューに戻り、**新規記憶域プール ウィザード** を使用して、次の設定で新しい記憶域プールを作成します。
 
     -   名前: **Log Storage Pool**
 
-    -   物理ディスク: *最後の 4 つのディスクを選択し、その割り当てを* [**自動**] に設定します。
+    -   物理ディスク: *最後の 4 つのディスクを選択し、その割り当てを* 「**自動**」 に設定します。
 
 1.  **新規仮想ディスク ウィザード** を使用して、次の設定で新しい仮想ディスクを作成します。
 
@@ -429,9 +423,9 @@ Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restar
 
     > **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
 
-1.  ラボ コンピューターで Azure portal を開き、[**+ リソースを作成**] をクリックします。
+1.  ラボ コンピューターで Azure portal を開き、「**+ リソースを作成**」 をクリックします。
 
-1.  [**新規**] ブレードで、次の設定を使用して新しいストレージ アカウントの作成を開始します。
+1.  「**新規**」 ブレードで、次の設定を使用して新しいストレージ アカウントの作成を開始します。
 
     -   サブスクリプション: Azure サブスクリプションの名前。
 
@@ -463,11 +457,11 @@ Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restar
 
 1.  **az12001b-cl-vm0** ブレードから、リモート デスクトップを使用して仮想マシン ゲスト オペレーティング システムに接続します。認証を求めるメッセージが表示されたら、次の認証情報を入力します。
 
-    -   ユーザー名: **ADATUM\\受講生**
+    -   ユーザー名: **ADATUM\\Student**
 
     -   パスワード: **Pa55w.rd1234**
 
-1.  az12001b-cl-vm0 への RDP セッションで、サーバー マネージャーの [**ツール**] メニューから、**Active Directory 管理センター** を起動します。   
+1.  az12001b-cl-vm0 への RDP セッションで、サーバー マネージャーの 「**ツール**」 メニューから、**Active Directory 管理センター** を起動します。   
 
 1.  Active Directory 管理センター で、adatum.com ドメインのルートに **クラスター** という名前の新しい組織単位を作成します。
 
@@ -483,21 +477,21 @@ New-Cluster -Name az12001b-cl-cl0 -Node $nodes -NoStorage -StaticAddress 10.0.1.
 
 1.  az12001b-cl-vm0 への RDP セッションから 、**Active Directory 管理センター コンソール** に切り替えます。 
 
-1.  Active Directory 管理センターで、 **クラスター** 組織単位に移動し、[**プロパティ**] ウィンドウを表示します。    
+1.  Active Directory 管理センターで、 **クラスター** 組織単位に移動し、「**プロパティ**」 ウィンドウを表示します。    
 
-1.  [**クラスター**] 組織単位の [**プロパティ** ] ウィンドウで、[**拡張機能**] セクションに移動し、[**セキュリティ**] タブを表示します。        
+1.  「**クラスター**」 組織単位の 「**プロパティ**」 ウィンドウで、「**拡張機能**」 セクションに移動し、「**セキュリティ**」 タブを表示します。        
 
-1.  [**セキュリティ**] タブで [**詳細**] ボタンをクリックして、[**Advanced Security Settings for Clusters**] (クラスターの詳細なセキュリティ設定) ウィンドウを開きます。      
+1.  「**セキュリティ**」 タブで 「**詳細**」 ボタンをクリックして、「**Advanced Security Settings for Clusters**」 (クラスターの詳細なセキュリティ設定) ウィンドウを開きます。      
 
-1.  [**コンピューターの高度セキュリティ設定**] (Advanced Security Settings for Computers) ウィンドウの [**アクセス許可**] タブで、[**追加**] をクリックします。
+1.  「**コンピューターの高度セキュリティ設定**」 (Advanced Security Settings for Computers) ウィンドウの 「**アクセス許可**」 タブで、「**追加**」 をクリックします。
 
-1.  [**Permission Entry for Clusters**] (クラスターのアクセス許可エントリ) ウィンドウで、[**プリンシパルの選択**] をクリックします。
+1.  「**Permission Entry for Clusters**」 (クラスターのアクセス許可エントリ) ウィンドウで、「**プリンシパルの選択**」 をクリックします。
 
-1.  [**ユーザー、サービス アカウントまたはグループの選択**] (Select User, Service Account or Group) ダイアログ ボックスで、[**オブジェクトの種類**] をクリックし、[**コンピューター**] エントリの横にあるチェックボックスを有効にし、[**OK**] をクリックします。 
+1.  「**ユーザー、サービス アカウントまたはグループの選択**」 (Select User, Service Account or Group) ダイアログ ボックスで、「**オブジェクトの種類**」 をクリックし、「**コンピューター**」 エントリの横にあるチェックボックスを有効にし、「**OK**」 をクリックします。 
 
-1.  [**ユーザー、コンピューター、サービス アカウント、またはグループの選択**] ダイアログ ボックスに戻り、[**選択するオブジェクト名を入力してください**] に「**az12001b-cl-cl0**」と入力し、[**OK**] をクリックします。       
+1.  「**ユーザー、コンピューター、サービス アカウント、またはグループの選択**」 ダイアログ ボックスに戻り、「**選択するオブジェクト名を入力してください**」 に「**az12001b-cl-cl0**」と入力し、「**OK**」 をクリックします。       
 
-1.  [**クラスターのアクセス許可エントリ**] ウィンドウで、[**タイプ**] ドロップダウン リストに [**許可**] が表示されるようにします。    次に、[**適用先**] ドロップダウン リストで、[**このオブジェクトとすべての子オブジェクト**] を選択します。    [**アクセス許可**] リストで、[**コンピューター オブジェクトの作成**] チェック ボックスと [**コンピューター オブジェクトの削除**] チェック ボックスをオンにし、[**OK**] を 2 回クリックします。
+1.  「**クラスターのアクセス許可エントリ**」 ウィンドウで、「**タイプ**」 ドロップダウン リストに 「**許可**」 が表示されるようにします。    次に、「**適用先**」 ドロップダウン リストで、「**このオブジェクトとすべての子オブジェクト**」 を選択します。    「**アクセス許可**」 リストで、「**コンピューター オブジェクトの作成**」 チェック ボックスと 「**コンピューター オブジェクトの削除**」 チェック ボックスをオンにし、「**OK**」 を 2 回クリックします。
 
 1.  Windows PowerShell ISE セッションで、次を実行して Az PowerShell モジュールをインストールします。
 
@@ -527,9 +521,9 @@ $cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGrou
 Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $cwStorageAccountKey
 ```
 
-1.  結果の構成を確認するには、az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、[**ツール**] メニューから [**フェールオーバー クラスター マネージャー**] を起動します。   
+1.  結果の構成を確認するには、az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ツール**」 メニューから 「**フェールオーバー クラスター マネージャー**」 を起動します。   
 
-1.  [**フェールオーバー クラスター マネージャー**] コンソールで、**az12001b-cl-cl0** クラスター構成 (ノードを含む) 、監視設定およびネットワーク設定を確認します。    クラスターには共有ストレージがないことに注意してください。
+1.  「**フェールオーバー クラスター マネージャー**」 コンソールで、**az12001b-cl-cl0** クラスター構成 (ノードを含む) 、監視設定およびネットワーク設定を確認します。    クラスターには共有ストレージがないことに注意してください。
 
 1.  az12001b-cl-vm0 への RDP セッションを 終了します。
 
@@ -580,9 +574,9 @@ Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $c
 
 ### タスク 2: 受信トラフィックを処理する Azure Load Balancers を作成して構成する
 
-1.  Azure portal で、[**+ リソースの作成 **] をクリックします。
+1.  Azure portal で、「**+ リソースの作成 **」 をクリックします。
 
-1.  [**新規**] ブレードで、次の設定を使用して新しい Azure Load Balancer の作成を開始します。
+1.  「**新規**」 ブレードで、次の設定を使用して新しい Azure Load Balancer の作成を開始します。
 
     -   サブスクリプション: Azure サブスクリプションの名前。
 
@@ -660,7 +654,7 @@ Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $c
 
 1.  Azure portal から、Cloud Shell で PowerShell セッションを開始します。 
 
-1.  [Cloud Shell] ウィンドウで次のコマンドを実行して、2 番目の Load Balancer で使用するパブリック IP アドレスを作成します。
+1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer で使用するパブリック IP アドレスを作成します。
 
 ```
 $resourceGroupName = 'az12001b-cl-RG'
@@ -672,7 +666,7 @@ $pipName = 'az12001b-cl-lb0-pip'
 az network public-ip create --resource-group $resourceGroupName --name $pipName --sku Standard --location $location
 ```
 
-1.  [Cloud Shell] ウィンドウで次のコマンドを実行して、2 番目の Load Balancer を作成します。
+1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer を作成します。
 
 ```
 $lbName = 'az12001b-cl-lb1'
@@ -690,15 +684,15 @@ $bePoolConfiguration = New-AzLoadBalancerBackendAddressPoolConfig -Name $lbBePoo
 New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Name $lbName -Sku Standard -BackendAddressPool $bePoolConfiguration -FrontendIpConfiguration $feIpconfiguration
 ```
 
-1.  [Cloud Shell] ウィンドウを閉じます。
+1.  「Cloud Shell」 ウィンドウを閉じます。
 
 1.  Azure portal で、**az12001b-cl-lb1** という名前の Azure Load Balancer のプロパティを表示するブレードに移動します。
 
-1.  **az12001b-cl-lb1** ブレードで、[**バックエンド プール**] をクリックします。
+1.  **az12001b-cl-lb1** ブレードで、「**バックエンド プール**」 をクリックします。
 
 1.  **az12001b-cl-lb1 - バックエンド プール** ブレードで、**az12001b-cl-lb1-bepool** をクリックします。
 
-1.  **az12001b-cl-lb1-bepool** ブレードで、次の設定を指定し、[**保存**] をクリックします。
+1.  **az12001b-cl-lb1-bepool** ブレードで、次の設定を指定し、「**保存**」 をクリックします。
 
     -   仮想ネットワーク: **adVNET (4 VM)**
 
@@ -706,7 +700,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
     -   仮想マシン: **az12001b-cl-vm1**  IP アドレス: **ipconfig1**
 
-1.  **az12001b-cl-lb1** ブレードで、[**正常性プローブ**] をクリックします。
+1.  **az12001b-cl-lb1** ブレードで、「**正常性プローブ**」 をクリックします。
 
 1.  **az12001b-cl-lb1 - 正常性プローブ** ブレードから、次の設定を使用して正常性プローブを追加します。
 
@@ -720,7 +714,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
     -   異常しきい値: **2** *つの連続エラー *
 
-1.  **az12001b-cl-lb1** ブレードで、[**負荷分散ルール**] をクリックします。
+1.  **az12001b-cl-lb1** ブレードで、「**負荷分散ルール**」 をクリックします。
 
 1.  **az12001b-cl-lb1 - 負荷分散ルール** ブレードから、次の設定を使用してネットワーク負荷分散ルールを追加します。
 
@@ -750,9 +744,9 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
    > **注記**: 2 つのクラスター化された Azure VM にはインターネットから直接アクセスできないため、ジャンプ ホストとして機能する Windows Server 2019 Datacenter を実行する Azure VM をデプロイします。 
 
-1.  ラボ コンピューターの Azure portal で、[**+ リソースの作成**] をクリックします。
+1.  ラボ コンピューターの Azure portal で、「**+ リソースの作成**」 をクリックします。
 
-1.  [**新規**] ブレードから、**Windows Server 2019 Datacenter** イメージに基づいて新規 Azure VM の作成を開始します。
+1.  「**新規**」 ブレードから、**Windows Server 2019 Datacenter** イメージに基づいて新規 Azure VM の作成を開始します。
 
 1.  次の設定を使用して Azure VM をプロビジョニングします。
 
@@ -770,7 +764,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
     -   サイズ: **Standard DS1 v2**
 
-    -   ユーザー名: **受講者**
+    -   ユーザー名: **Student**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -820,7 +814,7 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
 1.  RDP 経由で新しくプロビジョニングされた Azure VM に接続します。 
 
-1.  az12001b-vm2 への RDP セッションで、プライベート IP アドレス (それぞれ 10.0.1.4 および 10.0.1.5) を介して az12001b-cl-vm0 と az12001b-cl-vm1 の両方に SSH セッションを確立できることを確認します。 
+1.  az12001b-vm2 への RDP セッションで、プライベート IP アドレス (それぞれ 10.0.1.4 および 10.0.1.5) を介して az12001b-cl-vm0 と az12001b-cl-vm1 の両方に RDP セッションを確立できることを確認します。 
 
 > **結果**: このエクササイズを完了すると、可用性の高い SAP NetWeaver のデプロイをサポートするために必要となる Azure ネットワーク リソースのプロビジョニングを行うことができます。
 
@@ -832,9 +826,9 @@ New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Na
 
 #### タスク 1: Cloud Shell を開く
 
-1. ポータルの上部にある [**Cloud Shell**] アイコンをクリックして [Cloud Shell] ウィンドウを開き、シェルとして PowerShell を選択します。
+1. ポータルの上部にある 「**Cloud Shell**」 アイコンをクリックして 「Cloud Shell」 ウィンドウを開き、シェルとして PowerShell を選択します。
 
-1. ポータルの下部にある **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、[**Enter**] を押して、このラボで作成したすべてのリソース グループを一覧表示します。
+1. ポータルの下部にある **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 を押して、このラボで作成したすべてのリソース グループを一覧表示します。
 
 ```
 Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Select-Object ResourceGroupName
@@ -844,7 +838,7 @@ Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | S
 
 #### タスク 2: リソース グループの削除
 
-1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、[**Enter**] キーを押して、このラボで作成したリソース グループを削除します。
+1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 キーを押して、このラボで作成したリソース グループを削除します。
 
 ```
 Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Remove-AzResourceGroup -Force  

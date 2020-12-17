@@ -421,7 +421,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
     Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restart} 
     ```
 
-> **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
+    > **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
 
 1.  ラボ コンピューターで Azure portal を開き、「**+ リソースを作成**」 をクリックします。
 
@@ -507,7 +507,7 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
     Add-AzAccount
     ```
 
-> **注記**: プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
+    > **注記**: プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
 
 1.  Windows PowerShell ISE セッションで次を実行して、新しいクラスターの Cloud Witness Quorum を設定します。
 

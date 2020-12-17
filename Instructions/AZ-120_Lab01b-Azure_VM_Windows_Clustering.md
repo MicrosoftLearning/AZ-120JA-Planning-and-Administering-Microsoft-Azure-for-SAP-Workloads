@@ -53,17 +53,17 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
 1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数に値を割り当てる行を探します。
 
-```
+    ```
     "adVMSize": "Standard_DS2_v2"
 
-```
+    ```
 
 1.  「**テンプレートの編集**」 ブレードで、**adVMSize** 変数の値を **Standard_D4S_v3** に設定し、「**保存**」 をクリックします。
 
-```
+    ```
     "adVMSize": "Standard_D4s_v3"
 
-```
+    ```
 
 1.  「**2 つのドメインコントローラーを使用して新しい AD ドメインを作成する**」 ブレードに戻り、次の設定を指定し、「**購入**」 をクリックしてデプロイを開始します。
 
@@ -241,21 +241,21 @@ Azure に SAP NetWeaver を導入し、SQL サーバーをデータベース管�
 
 1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした最初の Azure VM に接続する 4 個のマネージド ディスクの最初のセットを作成します。
 
-```
-$resourceGroupName = 'az12001b-cl-RG'
+    ```
+    $resourceGroupName = 'az12001b-cl-RG'
 
-$location = (Get-AzResourceGroup -Name $resourceGroupName).Location
+    $location = (Get-AzResourceGroup -Name $resourceGroupName).Location
 
-$diskConfig = New-AzDiskConfig -Location $location -DiskSizeGB 128 -AccountType Premium_LRS -OsType Windows -CreateOption Empty
+    $diskConfig = New-AzDiskConfig -Location $location -DiskSizeGB 128 -AccountType Premium_LRS -OsType Windows -CreateOption Empty
 
-for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm0-DataDisk$i -Disk $diskConfig}
-```
+    for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm0-DataDisk$i -Disk $diskConfig}
+    ```
 
 1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、前のタスクでデプロイした 2 番目の Azure VM に接続する 4 個のマネージド ディスクの 2 番目のセットを作成します。
 
-```
-for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm1-DataDisk$i -Disk $diskConfig}
-```
+    ```
+    for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -DiskName az12001b-cl-vm1-DataDisk$i -Disk $diskConfig}
+    ```
 
 1.  Azure portal で、前のタスク (**az12001b-cl-vm0**) でプロビジョニングした最初の Azure VM のブレードに移動します。
 
@@ -312,19 +312,19 @@ for ($i=0;$i -lt 4;$i++) {New-AzDisk -ResourceGroupName $resourceGroupName -Disk
 
 1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、前のエクササイズの 2 番目のタスクでデプロイした Windows Server 2019 Azure VM を **adatum.com** Active Directory ドメインに結合します。 
 
-```
-$resourceGroupName = 'az12001b-cl-RG'
+    ```
+    $resourceGroupName = 'az12001b-cl-RG'
 
-$location = (Get-AzureRmResourceGroup -Name $resourceGroupName).Location
+    $location = (Get-AzureRmResourceGroup -Name $resourceGroupName).Location
 
-$settingString = '{"Name": "adatum.com", "User": "adatum.com\\Student", "Restart": "true", "Options": "3"}'
+    $settingString = '{"Name": "adatum.com", "User": "adatum.com\\Student", "Restart": "true", "Options": "3"}'
 
-$protectedSettingString = '{"Password": "Pa55w.rd1234"}'
+    $protectedSettingString = '{"Password": "Pa55w.rd1234"}'
 
-$vmNames = @('az12001b-cl-vm0','az12001b-cl-vm1')
+    $vmNames = @('az12001b-cl-vm0','az12001b-cl-vm1')
 
-foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGroupName -ExtensionType 'JsonADDomainExtension' -Name 'joindomain' -Publisher "Microsoft.Compute" -TypeHandlerVersion "1.0" -Vmname $vmName -Location $location -SettingString $settingString -ProtectedSettingString $protectedSettingString }
-```
+    foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGroupName -ExtensionType 'JsonADDomainExtension' -Name 'joindomain' -Publisher "Microsoft.Compute" -TypeHandlerVersion "1.0" -Vmname $vmName -Location $location -SettingString $settingString -ProtectedSettingString $protectedSettingString }
+    ```
 
 1.  次のタスクを進める前に、スクリプトが完了するのを待ちます。
 
@@ -413,13 +413,13 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1.  az12001b-cl-vm0 への RDP セッションで、Windows PowerShell ISE セッションを開始し、az12001b-cl-vm0 と az12001b-cl-vm1 の両方にフェールオーバー クラスタリングおよびリモート管理ツール機能をインストールします。
 
-```
+    ```
     $nodes = @('az12001b-cl-vm1', 'az12001b-cl-vm0')
 
     Invoke-Command $nodes {Install-WindowsFeature Failover-Clustering -IncludeAllSubFeature -IncludeManagementTools} 
 
     Invoke-Command $nodes {Install-WindowsFeature RSAT -IncludeAllSubFeature -Restart} 
-```
+    ```
 
 > **注記**: これにより、両方の Azure VM のゲスト オペレーティング システムが再起動されます。
 
@@ -469,11 +469,11 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1.  az12001b-cl-vm0 への RDP セッションで、Windows PowerShell ISE セッションを開始し、次を実行して新しいクラスターを作成します。
 
-```
+    ```
     $nodes = @('az12001b-cl-vm0','az12001b-cl-vm1')
 
     New-Cluster -Name az12001b-cl-cl0 -Node $nodes -NoStorage -StaticAddress 10.0.1.6
-```
+    ```
 
 1.  az12001b-cl-vm0 への RDP セッションから 、**Active Directory 管理センター コンソール** に切り替えます。 
 
@@ -495,23 +495,23 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1.  Windows PowerShell ISE セッションで、次を実行して Az PowerShell モジュールをインストールします。
 
-```
+    ```
     Install-PackageProvider -Name NuGet -Force
 
     Install-Module -Name Az -Force
-```
+    ```
 
 1.  Windows PowerShell ISE セッションで、次のを実行して Azure AD 認証情報を使用して認証します。
 
-```
+    ```
     Add-AzAccount
-```
+    ```
 
 > **注記**: プロンプトが表示されたら、このラボで使用する Azure サブスクリプションの所有者または共同作成者ロールを使用して、職場用、学校用、または個人の Microsoft アカウントでサインインします。
 
 1.  Windows PowerShell ISE セッションで次を実行して、新しいクラスターの Cloud Witness Quorum を設定します。
 
-```
+    ```
     $resourceGroupName = 'az12001b-cl-RG'
 
     $cwStorageAccountName = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName)[0].StorageAccountName
@@ -519,7 +519,7 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
     $cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $cwStorageAccountName).Value[0]
 
     Set-ClusterQuorum -CloudWitness -AccountName $cwStorageAccountName -AccessKey $cwStorageAccountKey
-```
+    ```
 
 1.  結果の構成を確認するには、az12001b-cl-vm0 への RDP セッションのサーバー マネージャーで、「**ツール**」 メニューから 「**フェールオーバー クラスター マネージャー**」 を起動します。   
 
@@ -656,7 +656,7 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer で使用するパブリック IP アドレスを作成します。
 
-```
+    ```
     $resourceGroupName = 'az12001b-cl-RG'
 
     $location = (Get-AzResourceGroup -Name $resourceGroupName).Location
@@ -664,11 +664,11 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
     $pipName = 'az12001b-cl-lb0-pip'
 
     az network public-ip create --resource-group $resourceGroupName --name $pipName --sku Standard --location $location
-```
+    ```
 
 1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、2 番目の Load Balancer を作成します。
 
-```
+    ```
     $lbName = 'az12001b-cl-lb1'
 
     $lbFeName = 'az12001b-cl-lb1-fe'
@@ -682,7 +682,7 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
     $bePoolConfiguration = New-AzLoadBalancerBackendAddressPoolConfig -Name $lbBePoolName
 
     New-AzLoadBalancer -ResourceGroupName $resourceGroupName -Location $location -Name $lbName -Sku Standard -BackendAddressPool $bePoolConfiguration -FrontendIpConfiguration $feIpconfiguration
-```
+    ```
 
 1.  「Cloud Shell」 ウィンドウを閉じます。
 
@@ -830,9 +830,9 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1. ポータルの下部にある **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 を押して、このラボで作成したすべてのリソース グループを一覧表示します。
 
-```
+    ```
     Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Select-Object ResourceGroupName
-```
+    ```
 
 1. このラボで作成したリソース グループのみが出力に含まれていることを確認します。これらのグループは、次のタスクで削除されます。
 
@@ -840,9 +840,9 @@ foreach ($vmName in $vmNames) { Set-AzVMExtension -ResourceGroupName $resourceGr
 
 1. **Cloud Shell** コマンド プロンプトで、次のコマンドを入力し、「**Enter**」 キーを押して、このラボで作成したリソース グループを削除します。
 
-```
+    ```
     Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12001b-*'} | Remove-AzResourceGroup -Force  
-```
+    ```
 
 1. ポータルの下部にある **Cloud Shell** プロンプトを閉じます。
 

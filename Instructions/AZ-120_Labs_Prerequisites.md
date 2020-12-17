@@ -28,12 +28,12 @@
 
 1.  Azure Portal の **Cloud Shell** で、PowerShell プロンプトで、次を実行します。`<Azure_region>` は、このラボで使用する対象の Azure リージョンを指定します。
 
-```
+    ```
     Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardDSv3Family'}
 
     Get-AzVMUsage -Location westus2 | Where-Object {$_.Name.Value -eq 'StandardESv3Family'}
 
-``` 
+    ``` 
 
     > **注記**: Azure リージョンの名前を特定するには、**Cloud Shell** の Bash プロンプトで `(Get-AzLocation).Location` を実行します。
    
@@ -61,7 +61,7 @@
 
     -   SKU ファミリ: **DSv3 シリーズ**、および **ESv3 シリーズ**
 
-1.  「**詳細**」 ブレードで、各 SKU シリーズの新しい制限を指定し、「**次へ**」 をクリックします。 ** 確認と作成**:
+1.  「**詳細**」 ブレードで、各 SKU シリーズの新しい制限を指定し、「**次へ**」 をクリックします。 **確認と作成**:
 
     -   重大度: **C - 最小限の影響**
 

@@ -1,7 +1,7 @@
 ﻿# AZ 120 モジュール 3: SAP on Azure の実装
 # ラボ 3a: Linux を実行する Azure VM に SAP アーキテクチャを実装する
 
-予想時間：120 分
+予想時間：100 分
 
 このラボのタスクすべては、Azure portal (Bash Cloud Shell セッションを含む) から実行されます  
 
@@ -13,30 +13,30 @@
   
 Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階として、Linux 上の SUSE ディストリビューションを実行している Azure VM 上の SAP NetWeaver の高可用性の実装を例証するデモを行いたいと考えています。
 
-## Objectives
+## 目標
   
 このラボを終了すると、下記ができるようになります。
 
--   高可用性な SAP NetWeaver のデプロイをサポートするために必要な Azure リソースをプロビジョニングする
+-   可用性の高い SAP NetWeaver のデプロイをサポートするために必要な Azure リソースをプロビジョニングする
 
--   高可用性な SAP NetWeaver のデプロイをサポートするように、Linux を実行している Azure VM の OS を構成する
+-   可用性の高い SAP NetWeaver のデプロイをサポートするように、Linux を実行している Azure VM の OS を構成する
 
--   高可用性な SAP NetWeaver のデプロイをサポートするように、Linux を実行している Azure VM でクラスタリングを構成する
+-   可用性の高い SAP NetWeaver のデプロイをサポートするように、Linux を実行している Azure VM でクラスタリングを構成する
 
 ## 必要条件
 
--   Availability Zones をサポートする Azure リージョンで十分な数の使用可能な DSv3 vCPU (2 x 4) と DSv2 (1 x 1) vCPU を持つ Microsoft Azure サブスクリプション
+-   可用性ゾーンをサポートする Azure リージョンで、十分な数の Dsv2 および Dsv3 vCPU (1vCPU の Standard_DS1_v2 VM を 4 台、4vCPU の Standard_D4s_v3 Vm を 2 台) が利用可能な Microsoft Azure サブスクリプション
 
--   Azure にアクセス可能な Windows 10、Windows Server 2019、または Windows Server 2016 を実行しているラボ コンピューター
+-   Azure Cloud Shell に対応した Web ブラウザーと Azure へのアクセスが可能なラボ コンピューター
 
 
-## 演習 1: 高可用性な SAP NetWeaver のデプロイをサポートするために必要な Azure リソースのプロビジョニング
+## 演習 1: 可用性の高い SAP NetWeaver のデプロイをサポートするために必要な Azure リソースのプロビジョニング
 
 時間: 30 分
 
 このエクササイズでは、Linux クラスタリングの構成に必要な Azure インフラストラクチャ コンピューティング コンポーネントをデプロイします。これには、同じ可用性セットで Linux SUSE を実行する Azure VM のペアを作成する必要があります。
 
-### タスク 1: 高可用性な SAP NetWeaver のデプロイをホストする仮想ネットワークを作成します。
+### タスク 1: 可用性の高い SAP NetWeaver のデプロイをホストする仮想ネットワークを作成します。
 
 1.  ラボ コンピューターから Web ブラウザーを起動し、https://portal.azure.com から Azure portal に移動します。
 
@@ -46,23 +46,33 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     > **注記**: 現在の Azure サブスクリプションで Cloud Shell を初めて起動する場合は、Azure ファイル共有を作成して Cloud Shell ファイルを永続化するように求められます。その場合は、既定値に設定すると、自動的に生成されたリソース グループ内にストレージ アカウントが作成されます。
 
-1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、Availability Zones をサポートする Azure リージョンと、このラボのリソースを作成する場所を指定します (`<region>` を Azure リージョンの名前に置き換えます)。
+1.  Cloud Shell ウィンドウで、次のコマンドを実行して、可用性ゾーンをサポートする Azure リージョンと、このラボのリソースを作成する場所を指定します (`<region>` を可用性ゾーンをサポートする Azure リージョンの名前に置き換えます)。
 
-    ```
+    ```cli
     LOCATION='<region>'
+    ```
+
+    > **注記**: リソースのデプロイには **East US** または **East US2** リージョンの使用を検討してください。 
+
+    > **注記**: Azure リージョンに適切な表記を使用してください (**US East** ではなく **eastus** など、スペースを含まない短い名前)。
+
+    > **注記**: 可用性ゾーンをサポートする Azure リージョンを特定するには、[https://docs.microsoft.com/ja-jp/azure/availability-zones/az-region](https://docs.microsoft.com/ja-jp/azure/availability-zones/az-region) を参照してください
+
+1. Cloud Shell ペインで、次のコマンドを実行して、変数 `RESOURCE_GROUP_NAME` の値を、前のタスクでプロビジョニングしたリソースを含むリソース グループの名前に設定します。
+
+    ```cli
+    RESOURCE_GROUP_NAME='az12003a-sap-RG'
     ```
 
 1.  Cloud Shell ペインで次のコマンドを実行して、指定したリージョンにリソース グループを作成します。
 
-    ```
-    RESOURCE_GROUP_NAME='az12003a-sap-RG'
-
+    ```cli
     az group create --resource-group $RESOURCE_GROUP_NAME --location $LOCATION
     ```
 
 1.  Cloud Shell ペインで次のコマンドを実行して、作成したリソース グループ内に 1 つのサブネットを有する仮想ネットワークを作成します。
 
-    ```
+    ```cli
     VNET_NAME='az12003a-sap-vnet'
 
     VNET_PREFIX='10.3.0.0/16'
@@ -76,27 +86,37 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  Cloud Shell ペインで次のコマンドを実行して、新しく作成した仮想ネットワークにあるサブネットのリソース ID を特定します。
 
-    ```
+    ```cli
     az network vnet subnet list --resource-group $RESOURCE_GROUP_NAME --vnet-name $VNET_NAME --query "[?name == '$SUBNET_NAME'].id" --output tsv
     ```
 
 1.  結果の値をクリップボードにコピーします。これは、次のタスクで必要になります。
 
-### タスク 2: 高可用性 SAP NetWeaver のデプロイをホストする Linux SUSE が稼働する Azure VM をプロビジョニングするために Azure Resource Manager テンプレートをデプロイする
+### タスク 2: 可用性の高い SAP NetWeaver のデプロイをホストする Linux SUSE が稼働する Azure VM をプロビジョニングするために Azure Resource Manager テンプレートをデプロイする
 
 1.  ラボ コンピューターでブラウザを起動し、[**https://github.com/Azure/azure-quickstart-templates/tree/master/sap-3-tier-marketplace-image-md**](https://github.com/Azure/azure-quickstart-templates/tree/master/sap-3-tier-marketplace-image-md)を参照します。
 
     > **注記**: Microsoft Edge またはサード パーティのブラウザーを使用してください。Internet Explorer は使用しないでください。
 
-1.  **SAP NetWeaver 3-tier compatible template using a Marketplace image - MD** (Marketplace イメージを使った SAP NetWeaver 3 層構成互換テンプレート - MD) というタイトルのページで、「**Azure にデプロイ**」 をクリックします。これにより、Azure portal に自動的にリダイレクトされ、**SAP NetWeaver 3-tier (managed disk)** ブレードが表示されます。
+1.  **SAP NetWeaver 3-tier compatible template using a Marketplace image - MD** (Marketplace イメージを使った SAP NetWeaver 3 層構成互換テンプレート - MD) というタイトルのページで、**「Azure にデプロイ」**をクリックします。これにより、Azure portal に自動的にリダイレクトされ、**SAP NetWeaver 3-tier (managed disk)** ブレードが表示されます。
+
+1.  **SAP NetWeaver 3-tier (managed disk)** ブレードで、**「テンプレートの編集」**を選択します。
+
+1.  **「テンプレートの編集」**ブレードで、次の変更を適用して**「保存**:」を選択します。
+
+    -   **197** の行で `"dbVMSize":  "Standard_E8s_v3",` を `"dbVMSize": "Standard_D4s_v3",` に置換
+
+    -   **198** の行で `"ascsVMSize": "Standard_D2s_v3",` を `"ascsVMSize": "Standard_DS1_v2",` に置換
+
+    -   **199** の行で `"diVMSize": "Standard_D2s_v3",` を `"diVMSize": "Standard_DS1_v2",` に置換
 
 1.  **SAP NetWeaver 3-tier (managed disk)** ブレードで、以下の設定を使用してデプロイを開始します。
 
-    -   サブスクリプション: *Azure サブスクリプションの名前*。
+    -   サブスクリプション: *Azure サブスクリプションの名前。*
 
-    -   リソース グループ: **az12003a-sap-RG**
+    -   リソース グループ: *前のタスクで使用したリソース グループの名前*
 
-    -   場所: *このエクササイズの最初のタスクで指定したものと同じ Azure リージョンを選択します。*
+    -   保存先: *このエクササイズの最初のタスクで指定したものと同じ Azure リージョン*
 
     -   SAP システム ID: **I20**
 
@@ -110,7 +130,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   システムの可用性: **HA**
 
-    -   管理者ユーザー名: **student**
+    -   管理者ユーザー名: **受講生**
 
     -   認証タイプ: **パスワード**
 
@@ -118,7 +138,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   サブネット ID: *前のタスクでクリップボードにコピーした値*
 
-    -   Availability Zones: **1,2**
+    -   可用性ゾーン: **1,2**
 
     -   場所: **[resourceGroup().location]**
 
@@ -126,12 +146,14 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   _artifacts の保存先の Sas トークン: *空白のままにする*
 
-1.  デプロイが完了するのを待たずに、次のタスクに進みます。 
+1.  デプロイが完了するのを待たず、代わりに次のタスクに進みます。 
 
     > **注記**: CustomScriptExtension コンポーネントのデプロイ中に**競合**エラー メッセージが表示され、デプロイが失敗した場合は、次の手順を使用してこの問題を修復します。
 
        - Azure portal の 「**デプロイ**」 ブレードで、デプロイの詳細を確認し、CustomScriptExtension のインストールが失敗した VM を特定します
+
        - Azure portal で、前の手順で特定した VM のブレードに移動し、「**拡張機能**」を選択し 、「**拡張機能**」 ブレードから CustomScript 拡張機能を削除します
+
        - Azure portall で、**az12003a-sap-RG** リソース グループ ブレードに移動し、「**デプロイ**」 を選択し、失敗したデプロイへのリンクを選択して 「**再デプロイ**」を選択します。ターゲット リソース グループ (**az12003a-sap-RG** ) を選択して、ルート アカウントのパスワードを指定します (**Pa55w.rd1234** )。
 
 
@@ -139,15 +161,15 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
    > **注記**: 前のタスクでデプロイした Azure VM はインターネットからアクセスできないため、ジャンプ ホストとして機能する Windows Server 2019 Datacenter を実行する Azure VM をデプロイします。 
 
-1.  ラボ コンピューターの Azure portal で、「**+ リソースの作成**」 をクリックします。
+1.  ラボ コンピューターの Azure portal で、**「+ リソースの作成」**をクリックします。
 
-1.  「**新規**」 ブレードから、**Windows Server 2019 Datacenter** イメージを基に新規 Azure VM の作成を開始します。
+1.  **「新規」**ブレードから、**Windows Server 2019 Datacenter** イメージを基に新規 Azure VM の作成を開始します。
 
 1.  次の設定を使用して Azure VM をプロビジョニングします。
 
-    -   サブスクリプション: *Azure サブスクリプションの名前*。
+    -   サブスクリプション: Azure サブスクリプションの名前。
 
-    -   リソース グループ： *新しいリソース グループの名前* **az12003a-dmz-RG**
+    -   リソース グループ： 新しいリソース グループ **az12003a-dmz-RG**の名前
 
     -   仮想マシン名: **az12003a-vm0**
 
@@ -157,9 +179,9 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   画像: **Windows Server 2019 Datacenter**
 
-    -   サイズ: **スタンダード D2s v3**
+    -   サイズ: **Standard DS1 v2*** または類似のもの*
 
-    -   ユーザー名: **Student**
+    -   ユーザー名: **受講生**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -173,9 +195,9 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   仮想ネットワーク: **az12003a-sap-vnet**
 
-    -   サブネット: **bastionSubnet(10.3.255.0/24)** *という名前の新しいサブネット*
+    -   サブネット: **bastionSubnet(10.3.255.0/24)** という名前の新しいサブネット
 
-    -   パブリック IP: **az12003a-vm0-ip** *という名前の新規 IP アドレス*
+    -   パブリック IP: **az12003a-vm0-ip*** という名前の新規 IP アドレス*
 
     -   NIC ネットワーク セキュリティ グループ: **Basic**
 
@@ -245,15 +267,15 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  ラボ コンピューターの Azure portal で、**az12003a-vm0** ブレードに移動します。
 
-1.  **az12003a-vm0**ブレードから、リモート デスクトップ経由で Azure VM az12003a-vm0 に接続します。 
+1.  **az12003a-vm0** ブレードから、リモート デスクトップ経由で Azure VM az12003a-vm0 に接続します。 
 
-1.  az12003a-vm0 への RDP セッションのサーバー マネージャーで 「**ローカル サーバー**」 ビューに移動し、「**IE セキュリティ強化の構成**」 をオフにします。
+1.  az12003a-vm0 への RDP セッションのサーバー マネージャーで **ローカル サーバー** ビューに移動し、**「IE セキュリティ強化の構成」**をオフにします。
 
 1.  az12003a-vm0 への RDP セッションで、[**https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html**](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) から PuTTY をダウンロードしてインストールします。
 
 1.  PuTTY を使用して、SSH 経由で **i20-db-0** Azure VM に接続します。セキュリティ警告を確認し、プロンプトが表示されたら、次の認証情報を入力します。
 
-    -   ログイン: **student**
+    -   ログイン: **受講生**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -264,11 +286,11 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  i20-db-0 Azure VM への PuTTY SSH セッション内で、次のコマンドを実行して権限を昇格させます。 
 
-     ```
-     sudo su -
-     ```
+    ```
+    sudo su -
+    ```
 
-1.  パスワードの入力を求めるメッセージが表示されたら、**Pa55w.rd1234**と入力し、**Enter** キーを押します。 
+1.  パスワードの入力を求めるメッセージが表示されたら、**「Pa55w.rd1234」**と入力し、**Enter** キーを押します。 
 
 1.  次のコマンドをが実行して、SSH セッション～i20-db-0 内で、すべての SAP HANA 関連ボリューム (**/usr/sap**、**/hana/shared**、**/hana/backup**、**/hana/data** および **/hana/logs** を含む) が適切にマウントされていることを確認します。
 
@@ -281,86 +303,10 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 ### タスク 4: クロスノード パスワードレス SSH アクセスを有効にする
 
-1.  i20-db-0 への SSH セッションで、次を実行して、vi エディターでファイル **/etc/ssh/sshd\_config** を開きます (または、他のエディターを使用することもできます)。
+1.  i20-db-0 への SSH セッションで、次を実行してパスフレーズ不要の SSH キーを生成します。
 
     ```
-    vi /etc/ssh/sshd_config
-    ```
-
-1.  **/etc/ssh/sshd\_config** ファイルで、 **PermitRootLogin** エントリと **AuthorizedKeysFile** エントリを検索し、次のように構成します。
-    ```
-    PermitRootLogin yes
-    AuthorizedKeysFile      /root/.ssh/authorized_keys
-    ```
-
-1.  変更を保存し、エディタを閉じます。
-
-1.  i20-db-0 への SSH セッションで、次を実行して sshd デーモンを再起動します。
-
-    ```
-    systemctl restart sshd
-    ```
-
-1.  i20-db-1 Azure VM で前の 4 つの手順を繰り返します。
-
-1.  i20-db-0 への SSH セッションで、次を実行してパスフレーズレス SSH キーを生成します。
-
-    ```
-    ssh-keygen -tdsa
-    ```
-
-1.  プロンプトが表示されたら、**Enter** を 3 回押してから、次を実行してキーを表示します。 
-
-    ```
-    cat /root/.ssh/id_dsa.pub
-    ```
-
-1.  キーの値をクリップボードにコピーします。
-
-1.  i20-db-1 への SSH セッションで、次を実行してディレクトリ **/root/.ssh/** を作成します。
-
-    ```
-    mkdir /root/.ssh
-    ```
-
-1.  i20-db-1 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を開きます。
-
-    ```
-    vi /root/.ssh/authorized_keys
-    ```
-
-1.  エディター ウィンドウで、i20-db-1 で生成したキーを貼り付けます。
-
-1.  変更を保存し、エディターを閉じます。
-
-1.  i20-db-1 への SSH セッションで、次を実行してパスフレーズレス SSH キーを生成します。
-
-    ```
-    ssh-keygen -tdsa
-    ```
-
-1.  プロンプトが表示されたら、**Enter** を 3 回押してから、次を実行してキーを表示します。 
-
-    ```
-    cat /root/.ssh/id_dsa.pub
-    ```
-
-1.  キーの値をクリップボードにコピーします。
-
-1.  i20-db-0 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を開きます。
-
-    ```
-    vi /root/.ssh/authorized_keys
-    ```
-
-1.  エディター ウィンドウで、i20-db-1 で生成したキーを貼り付けます。
-
-1.  変更を保存し、エディターを閉じます。
-
-1.  i20-db-0 への SSH セッションで、次を実行してパスフレーズレス SSH キーを生成します。
-
-    ```
-    ssh-keygen -t rsa
+    ssh-keygen
     ```
 
 1.  プロンプトが表示されたら、**Enter** を 3 回押してから、次を実行してキーを表示します。 
@@ -371,20 +317,20 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  キーの値をクリップボードにコピーします。
 
-1.  i20-db-1 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を開きます。
+1.  i20-db-1 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を作成します。
 
     ```
     vi /root/.ssh/authorized_keys
     ```
 
-1.  エディター ウィンドウで、新しい行から開始する i20-db-0 で生成したキーを貼り付けます。
+1.  vi エディターで、i20-db-0 で生成したキーを貼り付けます。
 
-1.  変更を保存し、エディタを閉じます。
+1.  変更を保存し、エディターを閉じます。
 
 1.  SSH セッション～i20-db-1 内で、次のコマンドを実行してパスフレーズ不要の SSH キーを生成します。
 
     ```
-    ssh-keygen -t rsa
+    ssh-keygen
     ```
 
 1.  プロンプトが表示されたら、**Enter** を 3 回押してから、次を実行してキーを表示します。 
@@ -395,15 +341,15 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  キーの値をクリップボードにコピーします。
 
-1.  i20-db-0 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を開きます。
+1.  i20-db-0 への SSH セッションで、次を実行して、vi エディターでファイル **/root/.ssh/authorized\_keys** を作成します。
 
     ```
     vi /root/.ssh/authorized_keys
     ```
 
-1.  エディター ウィンドウで、新しい行から開始する i20-db-1 で生成したキーを貼り付けます。
+1.  vi エディターで、新しい行から開始する i20-db-1 で生成したキーを貼り付けます。
 
-1.  変更を保存し、エディタを閉じます。
+1.  変更を保存し、エディターを閉じます。
 
 1.  i20-db-0 への SSH セッションで構成が成功したことを確認するには、次を実行して、i20-db-0 から i20-db-1 への SSH セッションを **root** として確立します。 
 
@@ -411,7 +357,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
     ssh root@i20-db-1
     ```
 
-1.  接続を続行するかどうかを確認するメッセージが表示されたら、`yes`と入力し、**Enter** キーを押します。 
+1.  接続を続行するかどうかを確認するメッセージが表示されたら、`yes` と入力し、**Enter** キーを押します。 
 
 1.  パスワードの入力が求められないことを確認します。
 
@@ -427,7 +373,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
     ssh root@i20-db-0
     ```
 
-1.  接続を続行するかどうかを確認するメッセージが表示されたら、`yes`と入力し、**Enter** キーを押します。 
+1.  接続を続行するかどうかを確認するメッセージが表示されたら、`yes` と入力し、**Enter** キーを押します。 
 
 1.  パスワードの入力が求められないことを確認します。
 
@@ -447,7 +393,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  **YaST コントロール センター**で、**ソフトウェア -\> アドオン製品** を選択し、**Enter** を押します。これにより **Package Manager** が読み込まれます。
 
-1.  「**インストールされたアドオン製品**」 画面で、**パブリック クラウド モジュール**が既にインストールされていることを確認します。次に、**F9** を 2 回押してシェル プロンプトに戻ります。
+1.  **インストールされたアドオン製品**画面で、**パブリック クラウド モジュール**が既にインストールされていることを確認します。次に、**F9** を 2 回押してシェル プロンプトに戻ります。
 
 1.  i20-db-0 への SSH セッションで、次を実行してオペレーティング システムを更新します (プロンプトが表示されたら、**y** と入力し、**Enter** キーを押します)。
 
@@ -455,19 +401,55 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
     zypper update
     ```
 
-1. i20-db-0 への SSH セッションで、次を実行して HA 拡張機能の依存関係を更新します (プロンプトが表示されたら、**y** と入力して **Enter** キーを押し、**SUSE エンド ユーザー使用許諾契約**を読んで **q** と入力し、**はい**と入力してライセンス条件に同意し、**Enter** キーをもう一度押します)。
+1.  i20-db-0 への SSH セッションで、次を実行してクラスター リソースで必要なパッケージをインストールします (プロンプトが表示されたら、**y** と入力し、**Enter** キーを押します)。
 
     ```
-    zypper install sle-ha-release fence-agents
+    zypper in socat
     ```
 
-1. i20-db-1 の前の手順を繰り返します。
+1.  i20-db-0 への SSH セッションで、次のコマンドを実行して、クラスター リソースに必要な azure-lb コンポーネントをインストールします。
+
+    ```
+    zypper in resource-agents
+    ```
+
+1.  i20-db-0 への SSH セッションで、次を実行して、vi エディターでファイル **/etc/systemd/system.conf** を開きます。
+
+    ```
+    vi /etc/systemd/system.conf
+    ```
+
+1.  vi エディターで、`#DefaultTasksMax=512` を `DefaultTasksMax=4096` に置き換えます。 
+
+    > **注記**: 場合によっては、Pacemaker が多数のプロセスを作成し、その数がデフォルトの制限値に達してフェールオーバーをトリガーすることがあります。この変更により、許可されるプロセスの最大数が増加します。
+
+1.  変更を保存し、エディターを閉じます。
+
+1.  i20-db-0 への SSH セッションで、次を実行して構成の変更をアクティブ化します。
+
+    ```
+    systemctl daemon-reload
+    ```
+
+1. i20-db-0 への SSH セッションで、次を実行してフェンス エージェント パッケージをインストールします。
+
+    ```
+    zypper install fence-agents
+    ```
+
+1. i20-db-0 への SSH セッションで、次を実行してフェンス エージェントで必要な Azure Python SDK パッケージをインストールします (プロンプトが表示されたら、**y** と入力し、**Enter** キーを押します)。
+
+    ```
+    zypper install python-azure-mgmt-compute
+    ```
+
+1. i20-db-1 でこのタスクの前の手順を繰り返します。
 
 > **結果**: このエクササイズを完了すると、可用性の高い SAP NetWeaver デプロイをサポートするように、Linux を実行している Azure VM のオペレーティング システムを構成することができます
 
 ## 演習 3: 可用性の高い SAP NetWeaver デプロイをサポートするように Linux を実行している Azure VM でクラスタリングを構成
 
-時間: 60 分
+時間: 30 分
 
 このエクササイズでは、可用性の高い SAP NetWeaver のデプロイをサポートするために、Linux を実行している Azure VM にクラスタリングを構成します。
 
@@ -476,14 +458,12 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから次を実行して、i20-db-0 上の HA クラスターの構成を開始します。
 
     ```
-    ha-cluster-init
+    ha-cluster-init -u
     ```
 
 1.  プロンプトが表示されたら、次の情報を入力します。
 
     -   続行しますか (y/n)?: **y**
-
-    -   /root/.ssh/id_rsa は既に存在します - 上書きしますか (y/n)? **n**
 
     -   リング0 [10.3.0.20] のアドレス: **入力**
 
@@ -493,7 +473,7 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   仮想 IP アドレスを構成しますか (y/n)?: **n**
 
-   > **注記**: クラスタリングのセットアップでは、パスワードが **Linux** に設定された **hacluster** アカウントが生成されます。これついては、タスクの後半で取り上げます。
+    > **注記**: クラスタリングのセットアップでは、パスワードが **Linux** に設定された **hacluster** アカウントが生成されます。これについては、タスクの後半で変更します。
 
 1.  az12003a-vm0 への RDP セッション内で、i20-db-1 への PuTTY ベースの SSH セッションから次を実行して、i20-db-1 から i20-db-0 上に HA クラスターを結合します。
 
@@ -507,29 +487,25 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
     -   既存のノードの IP アドレスまたはホスト名 (例: 192.168.1.1) \[\]: **i20-db-0**
 
-    -   /root/.ssh/id\_rsa は既に存在します - 上書きしますか (y/n)? **n**
-
-    -   /root/.ssh/id\_dsa は既に存在します - 上書きしますか (y/n)? **n**
-
     -   リング0 [10.3.0.21] のアドレス: **入力**
 
 1.  i20-db-0 への PuTTY ベースの SSH セッションから、次を実行して、**hacluster** アカウントのパスワードを **Pa55w.rd1234** に設定します (プロンプトが表示されたら新しいパスワードを入力します)。 
+
     ```
     passwd hacluster
-
     ```
 
 1.  i20-db-1 の前の手順を繰り返します。
 
 ### タスク 2: corosync 構成の確認
 
-1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから次を実行して、**/etc/corosync/corosync.conf** ファイルのコンテンツを確認します。
+1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから次を実行して、**/etc/corosync/corosync.conf** ファイルを開きます。
 
     ```
-    cat /etc/corosync/corosync.conf
+    vi /etc/corosync/corosync.conf
     ```
 
-1. `transport: udpu` エントリと `nodelist` セクションに注意してください。
+1.  vi エディターで、`transport: udpu` エントリと `nodelist` セクションに注目してください。
     ```
     [...]
        interface { 
@@ -551,56 +527,37 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
         [...]
     ```
 
+1.  vi エディターで、エントリ `token: 5000` を `token: 30000` におきかえます。
+
+    > **注記**: この変更により、メモリを保持したメンテナンスが可能になります。詳細については、[Azure での仮想マシンのメンテナンスに関する Microsoft ドキュメント](https://docs.microsoft.com/ja-jp/azure/virtual-machines/maintenance-and-updates#maintenance-that-doesnt-require-a-reboot)を参照してください。
+
+1.  変更を保存し、エディターを閉じます。
+
 1.  i20-db-1 の前の手順を繰り返します。
 
 
-### タスク 3: STONITH クラスタリング オプションを構成する
-
-1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションから、以下のコンテンツを持つ **crm-defaults.txt** という名前の新しいファイルを作成します。
-
-    ```
-    property $id="cib-bootstrap-options" \
-      no-quorum-policy="ignore" \
-      stonith-enabled="true" \
-      stonith-action="reboot" \
-      stonith-timeout="150s"
-    rsc_defaults $id="rsc-options" \
-      resource-stickiness="1000" \
-      migration-threshold="5000"
-    op_defaults $id="op-options" \
-      timeout="600"
-    ```
-
-1.  変更を保存し、エディタを閉じます。
-
-1.  PuTTY ベースの SSH セッション～i20-db-0 内で、次のコマンドを実行して新しく作成したファイルの設定を適用します。
-
-    ```
-    crm configure load update crm-defaults.txt
-    ```
-
-### タスク 4: Azure サブスクリプション ID と Azure AD テナント ID の値を特定する
+### タスク 3: Azure サブスクリプション ID と Azure AD テナント ID の値を特定する
 
 1.  ラボ コンピューターのブラウザー ウィンドウで、Azure portal (**https://portal.azure.com**) を開き、サブスクリプションに関連付けられた Azure AD テナントでグローバル管理者ロールを持つユーザー アカウントでサインインしていることを確認します。
 
 1.  Azure portal の Cloud Shell で Bash セッションを開始します。 
 
-1.  「Cloud Shell」 ウィンドウで、次のコマンドを実行して、Azure サブスクリプションの ID と対応する Azure AD テナントの ID を特定します。
+1.  Cloud Shell ペインで、次のコマンドを実行して、Azure サブスクリプションの ID と対応する Azure AD テナントの ID を特定します。
 
-    ```
+    ```cli
     az account show --query '{id:id, tenantId:tenantId}' --output json
     ```
 
 1.  結果の値を Notepad にコピーします。これは、次のタスクで必要になります。
 
 
-### タスク 5: STONITH デバイス用の Azure AD アプリケーションの作成
+### タスク 4: STONITH デバイス用の Azure AD アプリケーションの作成
 
 1.  Azure portal で、Azure Active Directory ブレードに移動します。
 
-1.  Azure Active Directory ブレードから、「**アプリの登録**」 ブレードに移動し、「**+ 新規登録**」 をクリックします。
+1.  Azure Active Directory ブレードから、**アプリの登録**ブレードに移動し、**「+ 新規登録」** をクリックします。
 
-1.  **アプリケーションの登録**ブレードで、次の設定を指定し、「**登録**」 をクリックします。
+1.  **「アプリケーションの登録」**ブレードで、次の設定を指定し、**「登録」** をクリックします。
 
     -   名前: **Stonith app**
 
@@ -608,52 +565,54 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 1.  **Stonith アプリ** ブレードで、**アプリケーション (クライアント) ID** の値を Notepad にコピーします。これは、このエクササイズの後半で **login_id** として参照します。
 
-1.  **Stonith アプリ**ブレードで、「**証明書とシークレット**」 をクリックします。
+1.  **Stonith アプリ**ブレードで、**「証明書とシークレット」** をクリックします。
 
-1.  **Stonith アプリ - 証明書とシークレット** ブレードで、「**+ 新しいクライアントシークレット**」 をクリックします。
+1.  **Stonith アプリ - 証明書とシークレット**ブレードで、**「+ 新しいクライアント シークレット」** をクリックします。
 
-1.  「**クライアント シークレットの追加**」 ウィンドウの 「**説明**」 テキスト ボックスの 「**有効期限**」 セクションに 「**STONITH app key**」と入力し、既定の 「**年 1**」 のままにして、「**追加**」 をクリック します。
+1.  **「クライアント シークレットの追加」**ウィンドウの**「説明」**テキスト ボックスの**「有効期限」**セクションに **「STONITH app key」**と入力し、既定の**「1 年」** のままにして、**「追加」** をクリックします。
 
-1.  結果のシークレット値を Notepad にコピーします (このエントリは、「**追加**」 をクリックした後 1 度だけ表示されます)。これは、このエクササイズの後半で**パスワード**として参照します。
+1.  結果のシークレット値をメモ帳にコピーします (このエントリは、**「追加」**をクリックした後 1 度だけ表示されます)。これは、このエクササイズの後半で**パスワード**として参照します。
 
 
-### タスク 6: STONITH アプリのサービス プリンシパルに Azure VM へのアクセス許可を付与する 
+### タスク 5: STONITH アプリのサービス プリンシパルに Azure VM へのアクセス許可を付与する 
 
 1.  Azure portal で、 **i20-db-0** Azure VM のブレードに移動します。
 
-1.  **i20-db-0** ブレードから、**i20-db-0 - アクセスの制御 (IAM)** ブレードを表示します。
+1.  **i20-db-0** ブレードから、**i20-db-0 - アクセスの制御 (IAM) **ブレードを表示します。
 
 1.  **i20-db-0 - アクセスの制御 (IAM)** ブレードから、次の設定でロールの割り当てを追加します。
 
-    -   ロール: **所有者**
+    -   ロール: **仮想マシン共同作成者**
 
     -   アクセスの割り当て先: **Azure AD ユーザー、グループ、またはサービス プリンシパル**
 
     -   選択: **Stonith app**
 
-1.  前の手順を繰り返して、Stonith アプリの所有者ロールを **i20-db-1** Azure VM に割り当てます。
+1.  前の手順を繰り返して、Stonith アプリの仮想マシン共同作成者ロールを **i20-db-1** Azure VM に割り当てます。
 
 
-### タスク 7: STONITH クラスター デバイスを構成する 
+### タスク 6: STONITH クラスター デバイスを構成する 
 
-1.  az12003a-vm0 への RDP セッションの i20-db-0 への PuTTY ベースの SSH セッションで、次のコンテンツの **crm-fencing.txt** という名前の新しいファイルを作成します (`subscription_id`、`tenant_id`、`login_id`、`password` は、エクササイズ 3 タスク 5 で特定した値のプレースホルダー)。
+1.  az12003a-vm0 への RDPセッション 内で、PuTTY ベースの SSH セッションを i20-db-0 に切り替えます。
+
+1.  az12003a-vm0 への RDP セッション内で、i20-db-0 への PuTTY ベースの SSH セッションで、次のコマンドを実行します (`subscription_id`、`tenant_id`、`login_id`、`password`のプレースホルダーを、必ず演習 3 のタスク 4 で特定した値に置き換えてください)。
 
     ```
-    primitive rsc_st_azure_1 stonith:fence_azure_arm \
-         params subscriptionId="subscription_id" resourceGroup="az12003a-sap-RG" tenantId="tenant_id" login="login_id" passwd="password"
-    primitive rsc_st_azure_2 stonith:fence_azure_arm \
-         params subscriptionId="subscription_id" resourceGroup="az12003a-sap-RG" tenantId="tenant_id" login="login_id" passwd="password"
-    colocation col_st_azure -2000: rsc_st_azure_1:Started rsc_st_azure_2:Started
+    crm configure property stonith-enabled=true
+
+    crm configure property concurrent-fencing=true
+
+    crm configure primitive rsc_st_azure stonith:fence_azure_arm \
+      params subscriptionId="subscription_id" resourceGroup="az12003a-sap-RG" tenantId="tenant_id" login="login_id" passwd="password" \
+      pcmk_monitor_retries=4 pcmk_action_limit=3 power_timeout=240 pcmk_reboot_timeout=900 \
+      op monitor interval=3600 timeout=120
+
+    sudo crm configure property stonith-timeout=900
     ```
 
-1.  s03-db-0 の SSH セッションから、**crm configure load update crm-fencing.txt** を実行して、ファイルに設定を適用します。
-    ```
-    crm configure load update crm-fencing.txt
-    ```
+### タスク 7: Hawk を使用して Linux を実行している Azure VM のクラスタリング構成を確認する
 
-### タスク 8: Hawk を使用して Linux を実行している Azure VM のクラスタリング構成を確認する
-
-1.  az12003a-vm0 への RDP セッション内で、Internet Explorer を起動し、**https://i20-db-0:7630** に移動します。SUSE Hawk サインイン ページが表示されます。
+1.  az12003a-vm0 への RDP セッション内で、Internet Explorer を起動し、 **https://i20-db-0:7630** に移動します。SUSE Hawk サインイン ページが表示されます。
 
    > **注記**: **このサイトはセキュリティで保護されていません**のメッセージを無視します。
 
@@ -676,25 +635,30 @@ Adatum 社は、Azure に SAP NetWeaver をデプロイする準備段階とし�
 
 #### タスク 1: Cloud Shell を開く
 
-1. ポータルの上部にある 「**Cloud Shell**」 アイコンをクリックして Cloud Shell ウィンドウを開き、シェルとして Bash を選択します。
+1. ポータルの上部にある **Cloud Shell** アイコンをクリックして Cloud Shell ウィンドウを開き、シェルとして Bash を選択します。
 
-1. ポータルの下部にある **「Cloud Shell」** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+1. Cloud Shell ペインで、次のコマンドを実行して、変数 `RESOURCE_GROUP_PREFIX` の値を、このラボでプロビジョニングしたリソースを含むリソース グループ名のプレフィックスに設定します。
 
-    ```
-    az group list --query "[?starts_with(name,'az12003a-')]".name --output tsv
-    ```
-
-1. このラボで作成したリソース グループのみが出力に含まれていることを確認します。これらのグループは、次のタスクで削除されます。
-
-#### タスク 2: リソース グループの削除
-
-1. **「Cloud Shell」** コマンド プロンプトで、次のコマンドを入力し、 **「Enter」** キーを押してこの実習ラボで作成したリソース グループを削除します。
-
-    ```
-    az group list --query "[?starts_with(name,'az12003a-')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+    ```cli
+    RESOURCE_GROUP_PREFIX='az12003a-'
     ```
 
-1. ポータルの下部にある **「Cloud Shell」** プロンプトを閉じます。
+1. Cloud Shell ペインで次のコマンドを実行して、このラボで作成したすべてのリソース グループをリストアップします。
 
+    ```cli
+    az group list --query "[?starts_with(name,'$RESOURCE_GROUP_PREFIX')]".name --output tsv
+    ```
+
+1. このラボで作成したリソース グループのみが出力に含まれていることを確認します。このリソース グループとそのすべてのリソースは、次のタスクで削除されます。
+
+#### タスク 2: リソース グループを削除する
+
+1. Cloud Shell ペインで次のコマンドを実行して、リソース グループとそのリソースを削除します。
+
+    ```cli
+    az group list --query "[?starts_with(name,'$RESOURCE_GROUP_PREFIX')]".name --output tsv | xargs -L1 bash -c 'az group delete --name $0 --no-wait --yes'
+    ```
+
+1. Cloud Shell ペインを閉じます。
 
 > **結果**: このエクササイズを完了すると、このラボで使用したリソースが削除されます。

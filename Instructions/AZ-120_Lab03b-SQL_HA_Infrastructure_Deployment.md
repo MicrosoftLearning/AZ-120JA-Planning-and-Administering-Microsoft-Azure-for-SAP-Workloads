@@ -25,9 +25,9 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 ## 必要条件
 
--   Microsoft Azure サブスクリプション
+-   可用性ゾーンをサポートする Azure リージョンで、十分な数の Dsv2 および Dsv3 vCPU (1vCPU の Standard_DS1_v2 VM を 4 台、4vCPU の Standard_D4s_v3 VM を 6 台) が利用可能な Microsoft Azure サブスクリプション
 
--   Azure にアクセス可能な Windows 10、Windows Server 2016、または Windows Server 2016 を実行しているラボ コンピューター
+-   Azure Cloud Shell に対応した Web ブラウザーと Azure へのアクセスが可能なラボ コンピューター
 
 
 ## 演習 1: 可用性の高い SAP NetWeaver のデプロイをサポートするために必要な Azure リソースのプロビジョニング
@@ -44,7 +44,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  Azure portal で、「**+ リソースの作成**」 をクリックします。
 
-1.  **新しい** ブレードから、新しい **Template deployment** **(カスタム テンプレートを使用して展開)** の作成を開始します
+1.  **新しい** ブレードから、新しい **Template deployment (カスタム テンプレートを使用して展開)** の作成を開始します
 
 1.  「**カスタム デプロイ**」 ブレードの、「**GitHub クイックスタート テンプレートの読み込み**」 ドロップダウン リストから、エントリ **active-directory-new-domain-ha-2-dc-zones** を選択し、「**テンプレートの選択**」 をクリックします。
 
@@ -54,11 +54,13 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   サブスクリプション: *Azure サブスクリプションの名前*
 
-    -   リソース グループ:  **az12003b-ad-RG** *という名前の新規リソース グループ*
+    -   リソース グループ: *新しいリソース グループの名前* **az12003b-ad-RG**
 
-    -   場所: *Azure VM をデプロイできて、ラボの場所に最も近い Azure リージョン*
+    -   場所: *Azure VM をデプロイできる Azure リージョン*
 
-    -   管理者ユーザー名: **Student**
+    > **注記**: リソースのデプロイには **East US** または **East US2** リージョンの使用を検討してください。 
+
+    -   管理者ユーザー名: **学生**
 
     -   場所: *上記で指定したのと同じ Azure リージョン*
 
@@ -81,8 +83,10 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
     > **注記**: CustomScriptExtension コンポーネントのデプロイ中に**競合**エラー メッセージが表示され、デプロイが失敗した場合は、次の手順を使用してこの問題を修復します。
 
        - Azure portal の 「**デプロイ**」 ブレードで、デプロイの詳細を確認し、CustomScriptExtension のインストールが失敗した VM を特定します
+
        - Azure portal で、前の手順で特定した VM のブレードに移動し、「**拡張機能**」を選択し 、「**拡張機能**」 ブレードから CustomScript 拡張機能を削除します
-       - Azure portal で、**az12003b-sap-RG** リソース グループ ブレードに移動し、「**デプロイ**」 を選択し、失敗したデプロイへのリンクを選択して 「**再デプロイ**」 を選択し、ターゲット リソース グループ (**az12003b-sap-RG** ) を選択して、ルート アカウントのパスワードを指定します (**Pa55w.rd1234**)。     
+
+       - Azure portal で、**az12003b-sap-RG** リソース グループ ブレードに移動し、「**デプロイ**」 を選択し、失敗したデプロイへのリンクを選択して 「**再デプロイ**」 を選択し、ターゲット リソース グループ (**az12003b-sap-RG** ) を選択して、ルート アカウントのパスワードを指定します (**Pa55w.rd1234** )。
 
 ### タスク 2: 可用性の高い SAP NetWeaver デプロイと S2D クラスターを実行する Azure VM をホストするサブネットをプロビジョニングする。
 
@@ -90,7 +94,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  **az12003b-ad-RG** リソース グループ ブレードで、リソースの一覧から **adVNET** 仮想ネットワークを検索してエントリをクリックして **adVNET** ブレードを表示します。
 
-1.  **adVNET** ブレードから **adVNET - サブネット** ブレードに移動します。 
+1.  **adVNET** ブレードから **adVNET - サブネット**ブレードに移動します。 
 
 1.  **adVNET - サブネット** ブレードから、次の設定を使用して新しいサブネットを作成します。
 
@@ -108,11 +112,15 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     > **注記**: 現在の Azure サブスクリプションで Cloud Shell を初めて起動する場合は、Azure ファイル共有を作成して Cloud Shell ファイルを永続化するように求められます。その場合は、既定値に設定すると、自動的に生成されたリソース グループ内にストレージ アカウントが作成されます。
 
-1.  Cloud Shell ペインで、次のコマンドを実行して、前のタスクで作成した仮想ネットワークを識別します。
+1. Cloud Shell ペインで、次のコマンドを実行して、変数 `$resourceGroupName` の値を、前のタスクでプロビジョニングしたリソースを含むリソース グループ名に設定します。
 
     ```
     $resourceGroupName = 'az12003b-ad-RG'
+    ```
 
+1.  Cloud Shell ペインで、次のコマンドを実行して、前のタスクで作成した仮想ネットワークを識別します。
+
+    ```
     $vNetName = 'adVNet'
 
     $subnetName = 'sapSubnet'
@@ -132,17 +140,27 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  Azure portal で、「**テンプレートのデプロイ (カスタム テンプレートを使用したデプロイ**」を検索して選択します。
 
-1.  「**カスタム デプロイ**」 ブレードの 「**テンプレートの選択 (免責事項)**」 ボックスの一覧で、「**sap-3-tier-marketplace-image-md**」 と入力し、「**テンプレートの選択**」 をクリックします。       
+1.  「**カスタム デプロイ**」 ブレードの 「**テンプレートの選択 (免責事項)」**」 ボックスの一覧で、「**sap-3-tier-marketplace-image-md**」と入力し、「**テンプレートの選択**」 をクリックします。
 
     > **注記**: Microsoft Edge またはサード パーティのブラウザーを使用してください。Internet Explorer は使用しないでください。
 
-1.  「**SAP NetWeaver 3 層 (マネージド ディスク)**」 ブレードで、以下の設定を使用してデプロイを開始します。
+1.  **SAP NetWeaver 3-tier (managed disk)** ブレードで、**「テンプレートの編集」** を選択します。
 
-    -   サブスクリプション: Azure サブスクリプションの名前。
+1.  **「テンプレートの編集」** ブレードで、次の変更を適用して **「保存」** を選択します。
 
-    -   リソース グループ:  **az12003b-sap-RG** *という名前の新規リソース グループ*
+    -   **197**の行で `"dbVMSize": "Standard_E8s_v3",` を `"dbVMSize": "Standard_D4s_v3",` に置換
 
-    -   保存先: *このエクササイズの最初のタスクで指定したものと同じ Azure リージョン*
+    -   **198**の行で `"ascsVMSize": "Standard_D2s_v3",` を `"ascsVMSize": "Standard_DS1_v2",` に置換
+
+    -   **199**の行で`"diVMSize": "Standard_D2s_v3",` を `"diVMSize": "Standard_DS1_v2",` に置換
+
+1.  **SAP NetWeaver 3-tier (managed disk)** ブレードに戻り、以下の設定を使用してデプロイを開始します。
+
+    -   サブスクリプション: *Azure サブスクリプションの名前*
+
+    -   リソース グループ: *t新しいリソース グループの名前* **az12003b-sap-RG**
+
+    -   場所: *このエクササイズの最初のタスクで指定したものと同じ Azure リージョン*
 
     -   SAP システム ID: **Pa55w.rd1234**
 
@@ -156,7 +174,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   システムの可用性: **HA**
 
-    -   管理者ユーザー名: **Student**
+    -   管理者ユーザー名: **学生**
 
     -   認証タイプ: **パスワード**
 
@@ -190,7 +208,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   サブスクリプション: **Azure サブスクリプションの名前**。
 
-    -   リソース グループ:  **az12003b-s2d-RG** *という名前の新規リソース グループ*
+    -   リソース グループ: *新しいリソース グループの名前* **az12003b-s2d-RG**
 
     -   リージョン: *このエクササイズの最初のタスクで Azure VM をデプロイしたのと同じ Azure リージョン*
 
@@ -198,19 +216,19 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   VM サイズ: **Standard D4S\_v3**
 
-    -   高速ネットワークを有効にする:  **True**
+    -   高速ネットワークを有効にする: **True**
 
     -   イメージの SKU: **2016-Datacenter-Server-Core**
 
     -   VM カウント: **2**
 
-    -   VM ディスク サイズ: **120**
+    -   VM ディスク サイズ: **128**
 
     -   VM ディスク カウント: **3**
 
     -   既存のドメイン名: **adatum.com**
 
-    -   管理者ユーザー名: **Student**
+    -   管理者ユーザー名: **学生**
 
     -   管理者パスワード: **Pa55w.rd1234**
 
@@ -226,7 +244,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   スケジュールされた更新日: **日曜日**
 
-    -   スケジュールされた更新時間: **3:00 PM**
+    -   スケジュールされた更新時間: **3:00 AM**
 
     -   リアルタイム マルウェア対策有効: **False**
 
@@ -242,7 +260,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  デプロイには約 20 分間かかります。デプロイが完了するのを待たず、代わりに次のタスクに進みます。
 
-### タスク 5: ジャンプ ホストをデプロイする
+### タスク 6: ジャンプ ホストをデプロイする
 
    > **注記**: 前のタスクでデプロイした Azure VM にはインターネットから直接アクセスできないため、ジャンプ ホストとして機能する Windows Server 2016 Datacenter を実行する Azure VM をデプロイします。 
 
@@ -252,9 +270,9 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  次の設定を使用して Azure VM をプロビジョニングします。
 
-    -   サブスクリプション: Azure サブスクリプションの名前。
+    -   サブスクリプション: *Azure サブスクリプションの名前*。
 
-    -   リソース グループ:  **az12003b-dmz-RG** *という名前の新規リソース グループ*
+    -   リソース グループ： *新しいリソース グループ* **az12003b-dmz-RG** *の名前*
 
     -   仮想マシン名: **az12003b-vm0**
 
@@ -264,9 +282,9 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   画像: **Windows Server 2019 Datacenter**
 
-    -   サイズ: **スタンダード D2s v3**
+    -   サイズ: **スタンダード DS1 v2**
 
-    -   ユーザー名: **Student**
+    -   ユーザー名: **学生**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -331,11 +349,15 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  Azure portal 上の Cloud Shell で PowerShell セッションを開始します。 
 
-1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、前のエクササイズの 3 番目のタスクでデプロイした Windows Server Azure VM を **adatum.com** Active Directory ドメインに結合します。
+1. Cloud Shell ペインで、次のコマンドを実行して、変数 `$resourceGroupName` の値を、前のタスクでプロビジョニングしたリソースを含むリソース グループ名に設定します。
 
     ```
     $resourceGroupName = 'az12003b-sap-RG'
+    ```
 
+1.  「Cloud Shell」 ウィンドウで次のコマンドを実行して、前のエクササイズの 3 番目のタスクでデプロイした Windows Server Azure VM を **adatum.com** Active Directory ドメインに結合します。
+
+    ```
     $location = (Get-AzResourceGroup -Name $resourceGroupName).Location
 
     $settingString = '{"Name": "adatum.com", "User": "adatum.com\\Student", "Restart": "true", "Options": "3"}'
@@ -353,7 +375,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  **az12003b-vm0** ブレードから、リモート デスクトップ経由で Azure VM az12003b-vm0 に接続します。プロンプトが表示されたら、次の認証情報を入力します。
 
-    -   ログイン: **student**
+    -   ログイン: **受講生**
 
     -   パスワード: **Pa55w.rd1234**
 
@@ -363,7 +385,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     -   パスワード: **Pa55w.rd1234**
 
-1.  リモート デスクトップを使用して、同じ認証情報で  **i20-db-1.adatum.com** Azure VM に接続します。
+1.  リモート デスクトップを使用して、同じ認証情報で **i20-db-1.adatum.com** Azure VM に接続します。
 
 1.  i20-db-0.adatum.com への RDP セッション内で、サーバー マネージャーでファイル サービスと記憶域サービスを使用してディスク構成を確認します。データベースファイルとログファイルのストレージを提供するために、ボリュームマウントを介して単一のデータディスクが構成されていることに注意してください。 
 
@@ -386,21 +408,21 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  ラボ コンピューターで Azure portal を開き、「**+ リソースを作成**」 をクリックします。
 
-1.  「**新規**」 ブレードから、次の設定を使用して**ストレージ アカウント**の新規作成を開始します。
+1.  **「新規」** ブレードから、次の設定を使用して**ストレージ アカウント**の新規作成を開始します。
 
     -   サブスクリプション: *お客様のAzureサブスクリプションの名称*
 
-    -   リソース グループ: **az12003b-sap-RG**
+    -   リソース グループ: *可用性の高い SAP NetWeaver のデプロイをホストする Azure VM をデプロイしたリソース グループの名前*
 
     -   ストレージ アカウント名: *3 ~ 24 の英数字で構成される一意の名前*
 
     -   場所: *前のエクササイズで Azure VM をデプロイしたのと同じ Azure リージョン*
 
-    -   パフォーマンス： **Standard**
+    -   パフォーマンス：**Standard**
 
-    -   アカウント種類： **ストレージ (汎用 v1)**
+    -   アカウント種類：**ストレージ (汎用 v1)**
 
-    -   レプリケーション： **ローカル冗長ストレージ (LRS)**
+    -   レプリケーション：**ローカル冗長ストレージ (LRS)**
 
     -   接続方法: **パブリック エンドポイント (すべてのネットワーク)**
 
@@ -471,11 +493,15 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     > **注記**: プロンプトが表示された場合は、このラボで使用する Azure サブスクリプションの所有者または共同作成者のロールを使用して、職場、学校または個人の Microsoft アカウントを使用してログインします。
 
-1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、新しいクラスターの Cloud Witness Quorum を設定します。
+1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、変数 `$resourceGroupName` の値を、前のタスクでプロビジョニングしたストレージ アカウントを含むリソース グループ名に設定します。
 
     ```
     $resourceGroupName = 'az12003b-sap-RG'
+    ```
 
+1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、新しいクラスターの Cloud Witness Quorum を設定します。
+
+    ```
     $cwStorageAccountName = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName)[0].StorageAccountName
 
     $cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $cwStorageAccountName).Value[0]
@@ -516,7 +542,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  i20-ascs-0.adatum.com への RDP セッションから、**Active Directory 管理センター** コンソールに切り替えます。
 
-1.  Active Directory 管理センターで、**クラスター**組織単位に移動し、「**プロパティ**」 ウィンドウを表示します。 
+1.  Active Directory 管理センターで、 **クラスター**組織単位に移動し、「**プロパティ**」 ウィンドウを表示します。 
 
 1.  「**クラスター**」 組織単位の 「**プロパティ** 」 ウィンドウで、「**拡張機能**」 セクションに移動し、「**セキュリティ**」 タブを表示します。 
 
@@ -548,11 +574,15 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
     > **注記**: プロンプトが表示された場合は、このラボで使用する Azure サブスクリプションの所有者または共同作成者のロールを使用して、職場、学校または個人の Microsoft アカウントを使用してログインします。
 
-1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、新しいクラスターの Cloud Witness Quorum を設定します。
+1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、変数 `$resourceGroupName` の値を、このエクササイズでプロビジョニングしたストレージ アカウントを含むリソース グループ名に設定します。
 
     ```
-    $resourceGroupName = 'az12003b-sap-RG'liveid
+    $resourceGroupName = 'az12003b-sap-RG'
+    ```
 
+1.  Windows PowerShell ISE セッション内で、次のコマンドを実行して、クラスターの Cloud Witness Quorum を設定します。
+
+    ```
     $cwStorageAccountName = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName)[0].StorageAccountName
 
     $cwStorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $cwStorageAccountName).Value[0]
@@ -562,7 +592,7 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 1.  結果の構成を確認するには、i20-ascs-0.adatum.com への RDP セッションのサーバー マネージャーで、「**ツール**」 メニューから 「**フェールオーバー クラスター マネージャー**」 を起動します。
 
-1.  「**フェールオーバー クラスター マネージャー**」 コンソールで、**az12003b-ascs-cl0** クラスター構成 (ノードを含む) 、監視設定およびネットワーク設定を確認します。クラスターには共有ストレージがないことに注意してください。
+1.  **「フェールオーバー クラスター マネージャー」** コンソールで、**az12003b-ascs-cl0** クラスター構成 (ノードを含む) 、監視設定およびネットワーク設定を確認します。クラスターには共有ストレージがないことに注意してください。
 
 
 ### タスク 7: \\\\GLOBALHOST\\sapmnt 共有にアクセス許可を設定する
@@ -620,25 +650,30 @@ Azure に SAP NetWeaver をデプロイする準備として、Adatum Corporatio
 
 #### タスク 1: Cloud Shell を開く
 
-1. ポータルの上部にある 「**Cloud Shell**」 アイコンをクリックして Cloud Shell ペインを開き、シェルとして PowerShell を選択します。
+1. ポータルの上部にある **「Cloud Shell」** アイコンをクリックして Cloud Shell ペインを開き、シェルとして PowerShell を選択します。
 
-1. ポータルの下部にある **「Cloud Shell」** コマンド プロンプトで、次のコマンドを入力し、**Enter** キーを押して、このラボで作成したすべてのリソース グループを一覧表示します。
+1. Cloud Shell ペインで、次のコマンドを実行して、変数 `$resourceGroupName` の値を、このラボの最初のエクササイズでプロビジョニングした **Windows Server 2019 Datacenter** Azure VM のペアを含むリソース グループ名に設定します。
 
     ```
-    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12003b-*'} | Select-Object ResourceGroupName
+    $resourceGroupNamePrefix = 'az12003b-'
+    ```
+
+1. Cloud Shell ペインで次のコマンドを実行して、このラボで作成したすべてのリソース グループをリストアップします。
+
+    ```
+    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like "$resourceGroupNamePrefix*"} | Select-Object ResourceGroupName
     ```
 
 1. このラボで作成したリソース グループのみが出力に含まれていることを確認します。これらのグループは、次のタスクで削除されます。
 
 #### タスク 2: リソース グループの削除
 
-1. **「Cloud Shell」** コマンド プロンプトで、次のコマンドを入力し、 **「Enter」** キーを押してこの実習ラボで作成したリソース グループを削除します。
+1. Cloud Shell ペインで次のコマンドを実行して、新しく作成したサブネットのリソース ID を特定します。
 
     ```
-    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like 'az12003b-*'} | Remove-AzResourceGroup -Force  
+    Get-AzResourceGroup | Where-Object {$_.ResourceGroupName -like "$resourceGroupNamePrefix*"} | Remove-AzResourceGroup -Force  
     ```
 
-1. ポータルの下部にある **「Cloud Shell」** プロンプトを閉じます。
-
+1. 「Cloud Shell」ペインを閉じます。
 
 > **結果**: このエクササイズを完了すると、このラボで使用したリソースが削除されます。
